@@ -1,0 +1,32 @@
+# 个人数据：把自己的排期表、配置放在 my/ 下，不会被提交
+my/
+config.json
+
+# 渲染 / 导出产物
+out/
+*.ics
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# 凭据：任何形式的授权码 / 密码都不该落盘，这里只是兜底
+.env
+*.secret
+
+# 编辑器 / 系统
+.claude/settings.local.json
+.vscode/
+.idea/
+*.swp
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# 临时文件
+*.tmp
+*.temp
+~$*
+*.log

@@ -1,0 +1,57 @@
+{
+  "_说明": "复制成 my/config.json 后按自己的情况改。config.json 已在 .gitignore 里，不会被提交。",
+
+  "data_file": "my/schedule.html",
+  "_data_file": "唯一数据文件。全程只维护这一个文件，不建副本、不按活动拆分。",
+
+  "title": "我的排期表",
+  "container_width": 760,
+  "_container_width": "邮件正文容器宽度（px）。手机端窄屏建议 600 以内，见 README 已知限制。",
+
+  "highlight_days": 12,
+  "_highlight_days": "倒计时进入这个天数内就标红加粗。",
+
+  "identities": ["顾问", "评委", "老师", "选手", "主导"],
+  "_identities": [
+    "身份栏的封闭词表——这是一组示例，请按你自己的场景整套替换。",
+    "机制比词本身重要：词表必须封闭，一件事归不进任何一个词时要问，不许临时造词，",
+    "否则同一种身份会在表里出现三种写法，表就不能一眼扫完了。",
+    "词与词之间如果有包含关系（例：示例词表里 顾问 ⊃ 评委，顾问有资格兼任评委），",
+    "写更高的那个，写低的那个等于降级。有这类关系就在 identity_notes 里写清。"
+  ],
+  "identity_notes": {
+    "顾问": "受邀提供指导、出方案。可兼任评委；兼任时仍记「顾问」。",
+    "评委": "纯受邀打分、定名次，不带顾问身份。",
+    "老师": "授课、讲师。",
+    "选手": "带项目参赛，被评判。",
+    "主导": "自己发起、自己张罗的事。"
+  },
+
+  "palette": [
+    { "bg": "#e8f4f6", "fg": "#0f6b7a" },
+    { "bg": "#f0f7f1", "fg": "#1e6b32" },
+    { "bg": "#eef4ff", "fg": "#1f3fa8" },
+    { "bg": "#fdeef3", "fg": "#a32a5e" },
+    { "bg": "#f5eefb", "fg": "#6b2fa0" },
+    { "bg": "#fff6e8", "fg": "#a0620a" }
+  ],
+  "_palette": [
+    "候选色池，一个活动占一组（浅底 + 深字），同一活动的所有行同色。",
+    "新活动从池子里取下一组没被占用的，并同步更新图例。",
+    "不要把颜色和具体活动写死在代码里——活动会换，颜色规则不换。"
+  ],
+  "palette_done": { "bg": "#f2f3f7", "fg": "#7d8399" },
+  "palette_weekend_fg": "#c9302c",
+
+  "mail": {
+    "_说明": "这里只写「用哪几个环境变量」，绝不写授权码本身。见 references/smtp-setup.md。",
+    "host_env": "SMTP_HOST",
+    "port_env": "SMTP_PORT",
+    "user_env": "SMTP_USER",
+    "pass_env": "SMTP_PASS",
+    "to_env": "MAIL_TO",
+    "subject_template": "我的排期表（更新至 {date}）",
+    "html_body_only": true,
+    "_html_body_only": "只发 HTML 正文，不要附加 HTML 附件——手机上打不开，纯属占空间。"
+  }
+}

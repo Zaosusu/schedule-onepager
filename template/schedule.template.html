@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<!--
+  排期表空骨架。用法：
+    mkdir my && cp template/schedule.template.html my/schedule.html
+  然后照下面的注释填。填好后 my/schedule.html 就是你唯一的数据文件，
+  以后每次都原地改它，不要另存副本。
+
+  改动前请读 references/email-html.md：这份 HTML 必须能在邮件客户端里渲染，
+  所以全部内联样式 + table 布局，禁 <style> / flex / grid / position。
+
+  一张填满的样子见 examples/schedule-demo.html。
+-->
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>我的排期表</title>
+</head>
+<body style="margin:0;padding:0;background-color:#f4f6fb;">
+<table bgcolor="#f4f6fb" role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#f4f6fb;">
+<tr><td align="center" style="padding:20px 10px;">
+
+<!-- 容器：默认 760px。width 属性和 style 都要写，缺一个就有客户端不认 -->
+<table bgcolor="#ffffff" role="presentation" width="760" cellpadding="0" cellspacing="0" border="0" style="width:760px;max-width:760px;background-color:#ffffff;border:1px solid #d8dced;font-family:'Microsoft YaHei','PingFang SC',Arial,sans-serif;">
+
+  <!-- 表头。「更新：」这一行每次动表都要改成当天 -->
+  <tr><td style="padding:22px 24px 16px 24px;border-bottom:3px solid #1f3fa8;">
+    <div style="font-size:23px;font-weight:bold;color:#1f3fa8;letter-spacing:1px;">我的排期表</div>
+    <div style="font-size:13px;color:#77809e;padding-top:6px;">更新：YYYY年M月D日（周X）</div>
+  </td></tr>
+
+  <!-- ===== 主表：按日期升序，一行 = 一个连续档期 ===== -->
+  <tr><td style="padding:18px 24px 0 24px;">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;font-size:14px;">
+
+      <tr bgcolor="#1f3fa8" style="background-color:#1f3fa8;">
+        <!-- 日期：连续多天写「M月D日<br>– M月D日」，合并成一行 -->
+        <td style="padding:11px 9px;border:1px solid #1f3fa8;color:#ffffff;font-weight:bold;width:104px;">日期</td>
+        <!-- 星期：周末用红色 #c9302c。用 scripts/countdown.py 算，别心算 -->
+        <td style="padding:11px 9px;border:1px solid #1f3fa8;color:#ffffff;font-weight:bold;width:56px;">星期</td>
+        <!-- 活动：一个活动一种底色，同活动所有行同色，并同步图例 -->
+        <td style="padding:11px 9px;border:1px solid #1f3fa8;color:#ffffff;font-weight:bold;width:120px;">活动</td>
+        <!-- 身份：只能取 config.json 里 identities 的词，不许现造 -->
+        <td style="padding:11px 9px;border:1px solid #1f3fa8;color:#ffffff;font-weight:bold;width:46px;">身份</td>
+        <!-- 事项：连续档期的内部细分写在这里（报到 D1、比赛 D2…），不要拆行 -->
+        <td style="padding:11px 9px;border:1px solid #1f3fa8;color:#ffffff;font-weight:bold;">事项</td>
+        <!-- 倒计时：未来写「N 天」，当天写「今天」，过去写「已完成」。12 天内标红加粗 -->
+        <td style="padding:11px 9px;border:1px solid #1f3fa8;color:#ffffff;font-weight:bold;width:54px;">倒计时</td>
+      </tr>
+
+      <!--
+        行模板 A · 未来的事项。把 #eef4ff / #1f3fa8 换成这个活动分到的底色 / 主色。
+        倒计时进入 12 天内时，最后一格的 color 改 #c9302c 并加粗。
+      -->
+      <tr bgcolor="#eef4ff" style="background-color:#eef4ff;">
+        <td style="padding:12px 9px;border:1px solid #d8dced;color:#333333;font-weight:bold;font-size:15px;">M月D日<br>– M月D日</td>
+        <td style="padding:12px 9px;border:1px solid #d8dced;color:#333333;">周X<br><span style="color:#c9302c;">周六</span></td>
+        <td style="padding:12px 9px;border:1px solid #d8dced;color:#1f3fa8;font-weight:bold;">活动名称</td>
+        <td style="padding:12px 9px;border:1px solid #d8dced;color:#333333;font-weight:bold;">身份</td>
+        <td style="padding:12px 9px;border:1px solid #d8dced;color:#333333;line-height:1.9;">
+          <b>要做的事</b><br>
+          <span style="color:#77809e;font-size:12px;">补充说明</span>
+        </td>
+        <td style="padding:12px 9px;border:1px solid #d8dced;color:#1f3fa8;font-weight:bold;">N 天</td>
+      </tr>
+
+      <!-- 行模板 B · 已经过去的事项：底色统一 #f2f3f7，全部字色转灰，倒计时写「已完成」 -->
+      <tr bgcolor="#f2f3f7" style="background-color:#f2f3f7;">
+        <td style="padding:12px 9px;border:1px solid #d8dced;color:#7d8399;font-weight:bold;">M月D日</td>
+        <td style="padding:12px 9px;border:1px solid #d8dced;color:#7d8399;">周X</td>
+        <td style="padding:12px 9px;border:1px solid #d8dced;color:#7d8399;font-weight:bold;">活动名称</td>
+        <td style="padding:12px 9px;border:1px solid #d8dced;color:#7d8399;">身份</td>
+        <td style="padding:12px 9px;border:1px solid #d8dced;color:#7d8399;">已经发生的事</td>
+        <td style="padding:12px 9px;border:1px solid #d8dced;color:#9aa0b4;">已完成</td>
+      </tr>
+
+    </table>
+  </td></tr>
+
+  <!-- ===== 图例：3 列网格，浅灰底框起来。每新增一个活动就补一格 ===== -->
+  <tr><td style="padding:20px 24px 0 24px;">
+    <table bgcolor="#fafbfd" role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#fafbfd;border:1px solid #e4e7f2;">
+      <tr><td style="padding:16px 20px 6px 20px;">
+        <div style="font-size:12px;color:#8a91ab;letter-spacing:2px;padding-bottom:12px;">图 例</div>
+
+        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="font-size:13px;color:#5a6180;">
+          <tr>
+            <td width="33%" style="padding:0 10px 14px 0;">
+              <!-- 色块用带背景色的空 span，不要用图片：很多客户端默认不加载图片 -->
+              <span style="background-color:#eef4ff;border:1px solid #cfd6e4;padding:3px 14px;">&nbsp;</span>&nbsp;&nbsp;活动名称
+            </td>
+            <td width="33%" style="padding:0 10px 14px 0;">
+              <span style="background-color:#f2f3f7;border:1px solid #cfd6e4;padding:3px 14px;">&nbsp;</span>&nbsp;&nbsp;已完成
+            </td>
+            <td width="34%" style="padding:0 0 14px 0;">&nbsp;</td>
+          </tr>
+          <tr>
+            <td style="padding:0 10px 14px 0;">
+              <span style="color:#c9302c;font-weight:bold;">红色星期</span>&nbsp;&nbsp;=&nbsp;&nbsp;周末
+            </td>
+            <td style="padding:0 10px 14px 0;">
+              <span style="color:#c9302c;font-weight:bold;">红色倒计时</span>&nbsp;&nbsp;=&nbsp;&nbsp;12 天内
+            </td>
+            <td style="padding:0 0 14px 0;">&nbsp;</td>
+          </tr>
+        </table>
+
+        <!-- ===== 身份说明：把你的封闭词表印在表上，看表的人才知道每个词什么意思 ===== -->
+        <div style="border-top:1px solid #e4e7f2;margin-top:2px;padding-top:14px;">
+          <div style="font-size:12px;color:#8a91ab;letter-spacing:2px;padding-bottom:12px;">身份说明</div>
+          <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="font-size:13px;color:#5a6180;">
+            <tr>
+              <td width="70" style="padding:0 0 10px 0;color:#333333;font-weight:bold;">身份词</td>
+              <td style="padding:0 0 10px 0;">这个词代表什么。<span style="color:#8a91ab;">有包含关系的写在这里。</span></td>
+            </tr>
+          </table>
+        </div>
+
+      </td></tr>
+    </table>
+  </td></tr>
+
+  <!--
+    ===== 可选：逐时段细表 =====
+    只在对方给了精确到分钟的官方安排时才做。不要自己从「三天活动」推算出开幕式、
+    颁奖之类的环节填进去——那是编的。没有官方逐时段就删掉这一整块。
+  -->
+  <tr><td style="padding:28px 24px 0 24px;">
+    <div style="font-size:16px;font-weight:bold;color:#1f3fa8;border-left:4px solid #1f3fa8;padding-left:10px;">活动名称 · 逐时段</div>
+    <div style="font-size:12px;color:#77809e;padding:7px 0 0 14px;line-height:1.6;">地点</div>
+  </td></tr>
+  <tr><td style="padding:10px 24px 0 24px;">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;font-size:14px;">
+      <tr bgcolor="#dfe7fa" style="background-color:#dfe7fa;">
+        <td style="padding:10px;border:1px solid #d8dced;font-weight:bold;color:#1f3fa8;width:130px;">时间</td>
+        <td style="padding:10px;border:1px solid #d8dced;font-weight:bold;color:#1f3fa8;">安排</td>
+      </tr>
+      <tr><td bgcolor="#eef4ff" colspan="2" style="padding:9px 10px;border:1px solid #d8dced;background-color:#eef4ff;color:#1f3fa8;font-weight:bold;">M月D日（周X）</td></tr>
+      <tr>
+        <td style="padding:10px;border:1px solid #d8dced;color:#333333;">HH:MM-HH:MM</td>
+        <td style="padding:10px;border:1px solid #d8dced;color:#333333;">这个时段做什么</td>
+      </tr>
+    </table>
+  </td></tr>
+
+  <!-- 页脚：随手要查的参考信息。别放建议、别放提醒、别放待确认清单 -->
+  <tr><td style="padding:22px 24px 22px 24px;">
+    <div style="border-top:1px solid #e4e7f2;padding-top:12px;font-size:12px;color:#99a0bb;line-height:1.8;">
+      需要随手查的参考信息写在这里。
+    </div>
+  </td></tr>
+
+</table>
+
+</td></tr>
+</table>
+</body>
+</html>

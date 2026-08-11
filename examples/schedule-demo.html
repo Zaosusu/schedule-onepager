@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<!--
+  示例排期表 —— 里面的人、活动、机构、电话、邮箱、地点全部虚构，请勿当真。
+  参照日「今天」= 2026年3月9日（周一），所以倒计时和灰底状态都是围绕这一天算的。
+  拿它当起点：cp examples/schedule-demo.html my/schedule.html，然后整张换成你自己的事。
+-->
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>我的排期表（示例）</title>
+</head>
+<body style="margin:0;padding:0;background-color:#f4f6fb;">
+<table bgcolor="#f4f6fb" role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#f4f6fb;">
+<tr><td align="center" style="padding:20px 10px;">
+
+<table bgcolor="#ffffff" role="presentation" width="760" cellpadding="0" cellspacing="0" border="0" style="width:760px;max-width:760px;background-color:#ffffff;border:1px solid #d8dced;font-family:'Microsoft YaHei','PingFang SC',Arial,sans-serif;">
+
+  <tr><td bgcolor="#fff6e8" style="background-color:#fff6e8;padding:10px 24px;border-bottom:1px solid #f0dcc0;font-size:12px;color:#a0620a;">
+    示例文件　·　人名 / 活动 / 机构 / 电话 / 邮箱 / 地点全部虚构
+  </td></tr>
+
+  <tr><td style="padding:22px 24px 16px 24px;border-bottom:3px solid #1f3fa8;">
+    <div style="font-size:23px;font-weight:bold;color:#1f3fa8;letter-spacing:1px;">我的排期表</div>
+    <div style="font-size:13px;color:#77809e;padding-top:6px;">更新：2026年3月9日（周一）</div>
+  </td></tr>
+
+  <!-- 主表 -->
+  <tr><td style="padding:18px 24px 0 24px;">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;font-size:14px;">
+
+      <tr bgcolor="#1f3fa8" style="background-color:#1f3fa8;">
+        <td style="padding:11px 9px;border:1px solid #1f3fa8;color:#ffffff;font-weight:bold;width:104px;">日期</td>
+        <td style="padding:11px 9px;border:1px solid #1f3fa8;color:#ffffff;font-weight:bold;width:56px;">星期</td>
+        <td style="padding:11px 9px;border:1px solid #1f3fa8;color:#ffffff;font-weight:bold;width:120px;">活动</td>
+        <td style="padding:11px 9px;border:1px solid #1f3fa8;color:#ffffff;font-weight:bold;width:46px;">身份</td>
+        <td style="padding:11px 9px;border:1px solid #1f3fa8;color:#ffffff;font-weight:bold;">事项</td>
+        <td style="padding:11px 9px;border:1px solid #1f3fa8;color:#ffffff;font-weight:bold;width:54px;">倒计时</td>
+      </tr>
+
+      <!-- 已过去：灰底 #f2f3f7 + 灰字，倒计时列写「已完成」 -->
+      <tr bgcolor="#f2f3f7" style="background-color:#f2f3f7;">
+        <td style="padding:12px 9px;border:1px solid #d8dced;color:#7d8399;font-weight:bold;">3月2日</td>
+        <td style="padding:12px 9px;border:1px solid #d8dced;color:#7d8399;">周一</td>
+        <td style="padding:12px 9px;border:1px solid #d8dced;color:#7d8399;font-weight:bold;">社区开源日</td>
+        <td style="padding:12px 9px;border:1px solid #d8dced;color:#7d8399;">主导</td>
+        <td style="padding:12px 9px;border:1px solid #d8dced;color:#7d8399;line-height:1.9;">
+          <b>14:00　场地踏勘</b><br>
+          与场地方对接人现场确认
+        </td>
+        <td style="padding:12px 9px;border:1px solid #d8dced;color:#9aa0b4;">已完成</td>
+      </tr>
+
+      <tr bgcolor="#f2f3f7" style="background-color:#f2f3f7;">
+        <td style="padding:12px 9px;border:1px solid #d8dced;color:#7d8399;font-weight:bold;">3月5日</td>
+        <td style="padding:12px 9px;border:1px solid #d8dced;color:#7d8399;">周四</td>
+        <td style="padding:12px 9px;border:1px solid #d8dced;color:#7d8399;font-weight:bold;">城西黑客松</td>
+        <td style="padding:12px 9px;border:1px solid #d8dced;color:#7d8399;font-weight:bold;">顾问</td>
+        <td style="padding:12px 9px;border:1px solid #d8dced;color:#7d8399;"><b>10:00　第一次碰面</b>（顾问事宜）</td>
+        <td style="padding:12px 9px;border:1px solid #d8dced;color:#9aa0b4;">已完成</td>
+      </tr>
+
+      <!-- 今天：倒计时列写「今天」，底色仍用活动色 -->
+      <tr bgcolor="#eef4ff" style="background-color:#eef4ff;">
+        <td style="padding:12px 9px;border:1px solid #d8dced;color:#333333;font-weight:bold;font-size:15px;">3月9日</td>
+        <td style="padding:12px 9px;border:1px solid #d8dced;color:#333333;">周一</td>
+        <td style="padding:12px 9px;border:1px solid #d8dced;color:#1f3fa8;font-weight:bold;">青年创作营</td>
+        <td style="padding:12px 9px;border:1px solid #d8dced;color:#333333;font-weight:bold;">老师</td>
+        <td style="padding:12px 9px;border:1px solid #d8dced;color:#333333;"><b>19:00　线上试讲</b>　·　60 分钟</td>
+        <td style="padding:12px 9px;border:1px solid #d8dced;color:#c9302c;font-weight:bold;">今天</td>
+      </tr>
+
+      <!-- 连续多天合并成一行，内部细分写在「事项」列里，不要拆成多行 -->
+      <tr bgcolor="#e8f4f6" style="background-color:#e8f4f6;">
+        <td style="padding:12px 9px;border:1px solid #d8dced;color:#333333;font-weight:bold;font-size:15px;">3月14日<br>– 3月15日</td>
+        <td style="padding:12px 9px;border:1px solid #d8dced;color:#333333;"><span style="color:#c9302c;">周六</span><br><span style="color:#c9302c;">周日</span></td>
+        <td style="padding:12px 9px;border:1px solid #d8dced;color:#0f6b7a;font-weight:bold;">城西黑客松</td>
+        <td style="padding:12px 9px;border:1px solid #d8dced;color:#333333;font-weight:bold;">顾问</td>
+        <td style="padding:12px 9px;border:1px solid #d8dced;color:#333333;line-height:1.9;">
+          3/14 签到 09:00-10:00 · 分组辅导 全天<br>
+          <b>3/15 评审 13:00-17:30</b><span style="color:#77809e;font-size:12px;"> · 逐时段见下表</span>
+        </td>
+        <td style="padding:12px 9px;border:1px solid #d8dced;color:#c9302c;font-weight:bold;">5 天</td>
+      </tr>
+
+      <tr bgcolor="#f5eefb" style="background-color:#f5eefb;">
+        <td style="padding:12px 9px;border:1px solid #d8dced;color:#333333;font-weight:bold;font-size:15px;">4月2日<br>– 4月4日</td>
+        <td style="padding:12px 9px;border:1px solid #d8dced;color:#333333;">周四<br><span style="color:#c9302c;">周六</span></td>
+        <td style="padding:12px 9px;border:1px solid #d8dced;color:#6b2fa0;font-weight:bold;">某职院 AI 课</td>
+        <td style="padding:12px 9px;border:1px solid #d8dced;color:#333333;font-weight:bold;">老师</td>
+        <td style="padding:12px 9px;border:1px solid #d8dced;color:#333333;line-height:1.9;">
+          <b>出差 3 天　授课</b>
+        </td>
+        <td style="padding:12px 9px;border:1px solid #d8dced;color:#6b2fa0;font-weight:bold;">24 天</td>
+      </tr>
+
+      <tr bgcolor="#eef4ff" style="background-color:#eef4ff;">
+        <td style="padding:12px 9px;border:1px solid #d8dced;color:#333333;font-weight:bold;font-size:15px;">5月18日<br>– 5月20日</td>
+        <td style="padding:12px 9px;border:1px solid #d8dced;color:#333333;">周一<br>周三</td>
+        <td style="padding:12px 9px;border:1px solid #d8dced;color:#1f3fa8;font-weight:bold;">青年创作营</td>
+        <td style="padding:12px 9px;border:1px solid #d8dced;color:#333333;font-weight:bold;">评委</td>
+        <td style="padding:12px 9px;border:1px solid #d8dced;color:#333333;line-height:1.9;">
+          <b>终评　3 天全程参与</b>
+        </td>
+        <td style="padding:12px 9px;border:1px solid #d8dced;color:#1f3fa8;font-weight:bold;">70 天</td>
+      </tr>
+
+    </table>
+  </td></tr>
+
+  <!-- 图例：3 列网格，浅灰底框起来，别挤成一行 -->
+  <tr><td style="padding:20px 24px 0 24px;">
+    <table bgcolor="#fafbfd" role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#fafbfd;border:1px solid #e4e7f2;">
+      <tr><td style="padding:16px 20px 6px 20px;">
+        <div style="font-size:12px;color:#8a91ab;letter-spacing:2px;padding-bottom:12px;">图 例</div>
+
+        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="font-size:13px;color:#5a6180;">
+          <tr>
+            <td width="33%" style="padding:0 10px 14px 0;">
+              <span style="background-color:#e8f4f6;border:1px solid #cfd6e4;padding:3px 14px;">&nbsp;</span>&nbsp;&nbsp;城西黑客松
+            </td>
+            <td width="33%" style="padding:0 10px 14px 0;">
+              <span style="background-color:#eef4ff;border:1px solid #cfd6e4;padding:3px 14px;">&nbsp;</span>&nbsp;&nbsp;青年创作营
+            </td>
+            <td width="34%" style="padding:0 0 14px 0;">
+              <span style="background-color:#f5eefb;border:1px solid #cfd6e4;padding:3px 14px;">&nbsp;</span>&nbsp;&nbsp;某职院 AI 课
+            </td>
+          </tr>
+          <tr>
+            <td style="padding:0 10px 14px 0;">
+              <span style="background-color:#f0f7f1;border:1px solid #cfd6e4;padding:3px 14px;">&nbsp;</span>&nbsp;&nbsp;社区开源日
+            </td>
+            <td style="padding:0 10px 14px 0;">
+              <span style="background-color:#f2f3f7;border:1px solid #cfd6e4;padding:3px 14px;">&nbsp;</span>&nbsp;&nbsp;已完成
+            </td>
+            <td style="padding:0 0 14px 0;">&nbsp;</td>
+          </tr>
+          <tr>
+            <td style="padding:0 10px 14px 0;">
+              <span style="color:#c9302c;font-weight:bold;">红色星期</span>&nbsp;&nbsp;=&nbsp;&nbsp;周末
+            </td>
+            <td style="padding:0 10px 14px 0;">
+              <span style="color:#c9302c;font-weight:bold;">红色倒计时</span>&nbsp;&nbsp;=&nbsp;&nbsp;12 天内
+            </td>
+            <td style="padding:0 0 14px 0;">&nbsp;</td>
+          </tr>
+        </table>
+
+        <div style="border-top:1px solid #e4e7f2;margin-top:2px;padding-top:14px;">
+          <div style="font-size:12px;color:#8a91ab;letter-spacing:2px;padding-bottom:12px;">身份说明</div>
+          <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="font-size:13px;color:#5a6180;">
+            <tr>
+              <td width="70" style="padding:0 0 10px 0;color:#333333;font-weight:bold;">顾问</td>
+              <td style="padding:0 0 10px 0;">受邀提供指导、出方案。<span style="color:#8a91ab;">可兼任评委；兼任时仍记「顾问」。</span></td>
+            </tr>
+            <tr>
+              <td style="padding:0 0 10px 0;color:#333333;font-weight:bold;">评委</td>
+              <td style="padding:0 0 10px 0;">纯受邀打分、定名次，不带顾问身份。</td>
+            </tr>
+            <tr>
+              <td style="padding:0 0 10px 0;color:#333333;font-weight:bold;">老师</td>
+              <td style="padding:0 0 10px 0;">授课、讲师。</td>
+            </tr>
+            <tr>
+              <td style="padding:0 0 10px 0;color:#333333;font-weight:bold;">选手</td>
+              <td style="padding:0 0 10px 0;">带项目参赛，被评判。</td>
+            </tr>
+            <tr>
+              <td style="padding:0 0 14px 0;color:#333333;font-weight:bold;">主导</td>
+              <td style="padding:0 0 14px 0;">自己发起、自己张罗的事。</td>
+            </tr>
+          </table>
+          <div style="font-size:12px;color:#8a91ab;padding-bottom:14px;">
+            这 5 个词是<b>示例词表</b>。换成你自己的场景该有的词，改 <span style="font-family:Consolas,monospace;">config.json</span> 的 <span style="font-family:Consolas,monospace;">identities</span>。
+          </div>
+        </div>
+
+      </td></tr>
+    </table>
+  </td></tr>
+
+  <!-- 逐时段细表：只在对方给了精确到分钟的官方安排时才做 -->
+  <tr><td style="padding:28px 24px 0 24px;">
+    <div style="font-size:16px;font-weight:bold;color:#0f6b7a;border-left:4px solid #0f6b7a;padding-left:10px;">城西黑客松 · 逐时段</div>
+    <div style="font-size:12px;color:#77809e;padding:7px 0 0 14px;line-height:1.6;">
+      示例场地（虚构）
+    </div>
+  </td></tr>
+  <tr><td style="padding:10px 24px 0 24px;">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;font-size:14px;">
+      <tr bgcolor="#dceef1" style="background-color:#dceef1;">
+        <td style="padding:10px;border:1px solid #d8dced;font-weight:bold;color:#0f6b7a;width:130px;">时间</td>
+        <td style="padding:10px;border:1px solid #d8dced;font-weight:bold;color:#0f6b7a;">安排</td>
+      </tr>
+
+      <tr><td bgcolor="#e8f4f6" colspan="2" style="padding:9px 10px;border:1px solid #d8dced;background-color:#e8f4f6;color:#0f6b7a;font-weight:bold;">3月14日（周六）· 第一天</td></tr>
+      <tr>
+        <td style="padding:10px;border:1px solid #d8dced;color:#333333;">09:00-10:00</td>
+        <td style="padding:10px;border:1px solid #d8dced;color:#333333;"><b>签到</b></td>
+      </tr>
+      <tr>
+        <td style="padding:10px;border:1px solid #d8dced;color:#333333;">10:00-10:30</td>
+        <td style="padding:10px;border:1px solid #d8dced;color:#333333;">开场 + 规则说明</td>
+      </tr>
+      <tr>
+        <td style="padding:10px;border:1px solid #d8dced;color:#333333;">10:30-18:00</td>
+        <td style="padding:10px;border:1px solid #d8dced;color:#333333;"><b>分组辅导</b>　<span style="font-size:12px;color:#77809e;">6 组轮转，每组 40 分钟</span></td>
+      </tr>
+
+      <tr><td bgcolor="#e8f4f6" colspan="2" style="padding:9px 10px;border:1px solid #d8dced;background-color:#e8f4f6;color:#0f6b7a;font-weight:bold;">3月15日（周日）· 第二天</td></tr>
+      <tr>
+        <td style="padding:10px;border:1px solid #d8dced;color:#333333;">09:30-12:00</td>
+        <td style="padding:10px;border:1px solid #d8dced;color:#333333;">开发冲刺（顾问随时答疑）</td>
+      </tr>
+      <tr>
+        <td style="padding:10px;border:1px solid #d8dced;color:#333333;">13:00-17:30</td>
+        <td style="padding:10px;border:1px solid #d8dced;color:#333333;"><b>路演 + 评审</b></td>
+      </tr>
+      <tr>
+        <td style="padding:10px;border:1px solid #d8dced;color:#333333;">17:30-18:00</td>
+        <td style="padding:10px;border:1px solid #d8dced;color:#333333;">公布结果</td>
+      </tr>
+    </table>
+  </td></tr>
+
+  <tr><td style="padding:22px 24px 22px 24px;">
+    <div style="border-top:1px solid #e4e7f2;padding-top:12px;font-size:12px;color:#99a0bb;line-height:1.8;">
+      <b>页脚</b>：放需要随手查的参考信息——赛制规则、提交格式、对接人。<br>
+      本表只收录已确定日期的事项。日期无冲突。<br>
+      示例对接人（虚构）：李某　138-0000-0000　·　example@example.com
+    </div>
+  </td></tr>
+
+</table>
+
+</td></tr>
+</table>
+</body>
+</html>
