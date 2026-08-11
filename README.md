@@ -83,6 +83,8 @@ python scripts/countdown.py --which-year 08-21
 python scripts/lint_schedule.py my/schedule.html
 ```
 
+`examples/` 和 `template/` 里的文件表头日期是**故意冻结**的，linter 会自动跳过「表头是否是今天」这一项并打一行 INFO 说明原因 —— 所以照着 README 试跑示例不会看到假报错。把它们复制到 `my/` 之后检查自动恢复；想在原地强制检查加 `--strict-date`。
+
 发到自己邮箱（授权码走环境变量，不落盘）：
 
 ```bash

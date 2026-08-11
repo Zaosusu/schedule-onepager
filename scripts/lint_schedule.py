@@ -20,11 +20,15 @@ Usage:
     python scripts/lint_schedule.py my/schedule.html
     python scripts/lint_schedule.py my/schedule.html --today 2026-03-09
 
+The shipped examples/ and template/ files are exempt from the header-date check
+(their dates are frozen on purpose); --strict-date forces it back on.
+
 Exit code 0 = no errors, 1 = at least one error.
 """
 
 import argparse
 import datetime
+import pathlib
 import re
 import sys
 
@@ -42,8 +46,22 @@ FORBIDDEN = [
 CN_MONTH_DAY = re.compile(r"(\d{1,2})月(\d{1,2})日")
 COUNTDOWN_CELL = re.compile(r">\s*(\d+)\s*天\s*<|>\s*(今天)\s*<|>\s*(已完成)\s*<")
 HEADER_UPDATED = re.compile(r"更新[：:]\s*(\d{4})年(\d{1,2})月(\d{1,2})日")
+HEADER_PLACEHOLDER = re.compile(r"更新[：:]\s*Y{2,4}\s*年")
 TAG_WITH_BG = re.compile(r"<(tr|table|td)\b[^>]*background-color\s*:[^>]*>", re.IGNORECASE)
 HTML_COMMENT = re.compile(r"<!--.*?-->", re.DOTALL)
+
+# Directories holding files whose header date is frozen by design: the demo is a
+# dated snapshot, the template carries a YYYY placeholder. Linting either would
+# otherwise report a failure on every single day, which trains people to ignore
+# the linter. Copy either one into my/ and the check switches itself back on,
+# because the copy no longer sits under these directories.
+REFERENCE_DIRS = frozenset(("examples", "template"))
+
+
+def is_reference_file(path):
+    """True for the repo's shipped example/template files."""
+    return any(part.lower() in REFERENCE_DIRS
+               for part in pathlib.PurePath(path).parts)
 
 
 def strip_comments(html):
@@ -56,8 +74,8 @@ def strip_comments(html):
     return HTML_COMMENT.sub(lambda m: "\n" * m.group(0).count("\n"), html)
 
 
-def lint(html, today):
-    errors, warnings = [], []
+def lint(html, today, check_date=True):
+    errors, warnings, infos = [], [], []
 
     for pattern, why in FORBIDDEN:
         for m in re.finditer(pattern, html, re.IGNORECASE):
@@ -73,21 +91,27 @@ def lint(html, today):
                           % (line, m.group(1).lower()))
 
     # header "updated on" must be today
-    m = HEADER_UPDATED.search(html)
-    if not m:
-        warnings.append("no dated update line in the header -- expected "
-                        "GENGXIN: YYYY-nian-M-yue-D-ri; readers cannot tell how stale the table is")
+    if not check_date:
+        pass        # caller prints why it was skipped -- the reason differs
+    elif HEADER_PLACEHOLDER.search(html):
+        errors.append("header still has the YYYY placeholder -- fill in today's "
+                      "date before mailing this table")
     else:
-        stamped = datetime.date(int(m.group(1)), int(m.group(2)), int(m.group(3)))
-        if stamped != today:
-            errors.append("header says updated %s but today is %s -- "
-                          "rule 6: refresh the whole table's time state, not just one row"
-                          % (stamped.isoformat(), today.isoformat()))
+        m = HEADER_UPDATED.search(html)
+        if not m:
+            warnings.append("no dated update line in the header -- expected "
+                            "GENGXIN: YYYY-nian-M-yue-D-ri; readers cannot tell how stale the table is")
+        else:
+            stamped = datetime.date(int(m.group(1)), int(m.group(2)), int(m.group(3)))
+            if stamped != today:
+                errors.append("header says updated %s but today is %s -- "
+                              "rule 6: refresh the whole table's time state, not just one row"
+                              % (stamped.isoformat(), today.isoformat()))
 
     if "<meta charset" not in html.lower():
         warnings.append("no <meta charset> -- some clients will mangle the Chinese")
 
-    return errors, warnings
+    return errors, warnings, infos
 
 
 def summarize(html):
@@ -112,7 +136,9 @@ def main(argv=None):
     p.add_argument("html")
     p.add_argument("--today", default=None, help="override today, e.g. 2026-03-09")
     p.add_argument("--no-date-check", action="store_true",
-                   help="skip the header-date check (use when linting examples/)")
+                   help="skip the header-date check")
+    p.add_argument("--strict-date", action="store_true",
+                   help="run the header-date check even on examples/ and template/")
     args = p.parse_args(argv)
 
     today = (datetime.datetime.strptime(args.today, "%Y-%m-%d").date()
@@ -125,12 +151,24 @@ def main(argv=None):
         print("FAILED to read %s: %s" % (args.html, e))
         return 1
 
-    html = strip_comments(raw)
-    errors, warnings = lint(html, today)
+    check_date, skip_reason = True, None
     if args.no_date_check:
-        errors = [e for e in errors if "header says updated" not in e]
-        warnings = [w for w in warnings if "no dated update line" not in w]
+        check_date = False
+        skip_reason = "header-date check skipped: --no-date-check was passed."
+    elif not args.strict_date and is_reference_file(args.html):
+        check_date = False
+        skip_reason = ("header-date check skipped: %s is a frozen reference file, "
+                       "its date is meant to be stale. Copy it under my/ and the "
+                       "check comes back; --strict-date forces it here."
+                       % args.html)
 
+    html = strip_comments(raw)
+    errors, warnings, infos = lint(html, today, check_date=check_date)
+    if skip_reason:
+        infos.insert(0, skip_reason)
+
+    for i in infos:
+        print("INFO  %s" % i)
     for w in warnings:
         print("WARN  %s" % w)
     for e in errors:
