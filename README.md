@@ -1,4 +1,4 @@
-# 一页纸排期表 · Schedule Onepager
+# 行程表skill · 一页纸排期表 · Schedule Onepager
 
 把零散进来的行程信息归档成**一张**能直接在邮箱里看的 HTML 表。**这张表只回答一个问题：哪几天被占用了。**
 
