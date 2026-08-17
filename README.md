@@ -37,6 +37,18 @@
 
 跑 `examples/schedule-demo.html` 看真实渲染效果（数据全部虚构）。
 
+## 还有个「每日 TODO」模式（和排期表分开）
+
+排期表管「哪几天被占用了」，TODO 管「今天动手做什么」。它是**另一个文件** `my/todo.html`，只装当天可勾选的动作项，不和排期表互相读取、也不从排期表自动搬条目。
+
+三列：状态（待办 / 进行中 / 已完成）/ 任务 / 备注。每天刷新表头日期、把过期的标灰。发邮件同样复用 `scripts/send_schedule.py my/todo.html`，也只有说「发」才发。
+
+```bash
+cp template/todo.template.html my/todo.html
+```
+
+跑 `examples/todo-demo.html` 看渲染效果（任务全部虚构）。
+
 ## 三条设计判断
 
 **1. 一张表，原地覆盖。** 数据文件只有一个。不建副本、不建草稿、不按活动拆分——多一份就会有一份是过期的，而你不知道是哪一份。
@@ -122,8 +134,10 @@ README.md                         # 给人看：就是这份
 config.example.json               # 身份词表 / 配色池 / 数据文件路径 / SMTP 环境变量名
 template/
   schedule.template.html          # 空骨架，每列都有注释说明怎么填
+  todo.template.html              # 每日 TODO 空骨架（独立文件，只装当天）
 examples/
   schedule-demo.html              # 填满的示例（人、活动、机构、电话、邮箱全部虚构）
+  todo-demo.html                  # 每日 TODO 填满示例（任务全部虚构）
 references/
   email-html.md                   # 邮件客户端 HTML 硬约束 + 自查清单
   smtp-setup.md                   # QQ/163/Gmail 授权码怎么拿，报错对照表

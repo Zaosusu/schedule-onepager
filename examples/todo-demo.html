@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<!--
+  每日 TODO 填满的示例。任务、项目、客户全部虚构，仅展示渲染效果。
+  真实使用时请 cp template/todo.template.html my/todo.html 后填你自己的当天任务。
+  表头日期是故意冻结的，纯示例。
+-->
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>今日 TODO</title>
+</head>
+<body style="margin:0;padding:0;background-color:#f4f6fb;">
+<table bgcolor="#f4f6fb" role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#f4f6fb;">
+<tr><td align="center" style="padding:20px 10px;">
+
+<table bgcolor="#ffffff" role="presentation" width="760" cellpadding="0" cellspacing="0" border="0" style="width:760px;max-width:760px;background-color:#ffffff;border:1px solid #d8dced;font-family:'Microsoft YaHei','PingFang SC',Arial,sans-serif;">
+
+  <tr><td style="padding:22px 24px 16px 24px;border-bottom:3px solid #0f6b7a;">
+    <div style="font-size:23px;font-weight:bold;color:#0f6b7a;letter-spacing:1px;">今日 TODO</div>
+    <div style="font-size:13px;color:#77809e;padding-top:6px;">2026年3月9日（周一）</div>
+  </td></tr>
+
+  <tr><td style="padding:18px 24px 0 24px;">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;font-size:14px;">
+
+      <tr bgcolor="#0f6b7a" style="background-color:#0f6b7a;">
+        <td style="padding:11px 9px;border:1px solid #0f6b7a;color:#ffffff;font-weight:bold;width:64px;">状态</td>
+        <td style="padding:11px 9px;border:1px solid #0f6b7a;color:#ffffff;font-weight:bold;">任务</td>
+        <td style="padding:11px 9px;border:1px solid #0f6b7a;color:#ffffff;font-weight:bold;width:150px;">备注</td>
+      </tr>
+
+      <tr>
+        <td style="padding:12px 9px;border:1px solid #d8dced;color:#c9302c;font-weight:bold;">待办</td>
+        <td style="padding:12px 9px;border:1px solid #d8dced;color:#333333;line-height:1.7;"><b>整理本周项目周报</b></td>
+        <td style="padding:12px 9px;border:1px solid #d8dced;color:#77809e;font-size:12px;line-height:1.6;">下班前发团队群</td>
+      </tr>
+
+      <tr>
+        <td style="padding:12px 9px;border:1px solid #d8dced;color:#c9302c;font-weight:bold;">待办</td>
+        <td style="padding:12px 9px;border:1px solid #d8dced;color:#333333;line-height:1.7;"><b>回复客户关于方案初稿的邮件</b></td>
+        <td style="padding:12px 9px;border:1px solid #d8dced;color:#77809e;font-size:12px;line-height:1.6;">某科技 · 张经理</td>
+      </tr>
+
+      <tr>
+        <td style="padding:12px 9px;border:1px solid #d8dced;color:#1f3fa8;font-weight:bold;">进行中</td>
+        <td style="padding:12px 9px;border:1px solid #d8dced;color:#333333;line-height:1.7;"><b>重写模块 A 的单元测试</b></td>
+        <td style="padding:12px 9px;border:1px solid #d8dced;color:#77809e;font-size:12px;line-height:1.6;">已覆盖 12/20 用例</td>
+      </tr>
+
+      <tr>
+        <td style="padding:12px 9px;border:1px solid #d8dced;color:#7d8399;">已完成</td>
+        <td style="padding:12px 9px;border:1px solid #d8dced;color:#7d8399;line-height:1.7;"><s>提交接口联调 PR</s></td>
+        <td style="padding:12px 9px;border:1px solid #d8dced;color:#9aa0b4;font-size:12px;line-height:1.6;">已合入 main</td>
+      </tr>
+
+    </table>
+  </td></tr>
+
+  <tr><td style="padding:22px 24px 22px 24px;">
+    <div style="border-top:1px solid #e4e7f2;padding-top:12px;font-size:12px;color:#99a0bb;line-height:1.8;">
+      状态：<span style="color:#c9302c;font-weight:bold;">待办</span> / <span style="color:#1f3fa8;font-weight:bold;">进行中</span> / <span style="color:#7d8399;">已完成（划掉）</span>。<br>
+      只装当天的事；每天刷新表头日期，把过期没划掉的项标灰。与排期表互不读取。
+    </div>
+  </td></tr>
+
+</table>
+
+</td></tr>
+</table>
+</body>
+</html>

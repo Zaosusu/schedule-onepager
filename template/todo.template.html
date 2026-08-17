@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<!--
+  每日 TODO 空骨架。用法：
+    cp template/todo.template.html my/todo.html
+  然后照下面的注释填。填好后 my/todo.html 是你当天唯一的清单文件，
+  以后每次都原地改它，不要另存副本。
+
+  ★ 这是「当日」清单，只装今天要做的事，和排期表（my/schedule.html）互不干扰、不互相读取。
+    不要从排期表自动搬运条目进来，也不要在这里复述赛事/排期。
+
+  改动前请读 references/email-html.md：这份 HTML 必须能在邮件客户端里渲染，
+  所以全部内联样式 + table 布局，禁 <style> / flex / grid / position。
+
+  一张填满的样子见 examples/todo-demo.html（任务全部虚构）。
+-->
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>今日 TODO</title>
+</head>
+<body style="margin:0;padding:0;background-color:#f4f6fb;">
+<table bgcolor="#f4f6fb" role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#f4f6fb;">
+<tr><td align="center" style="padding:20px 10px;">
+
+<!-- 容器：默认 760px。width 属性和 style 都要写，缺一个就有客户端不认 -->
+<table bgcolor="#ffffff" role="presentation" width="760" cellpadding="0" cellspacing="0" border="0" style="width:760px;max-width:760px;background-color:#ffffff;border:1px solid #d8dced;font-family:'Microsoft YaHei','PingFang SC',Arial,sans-serif;">
+
+  <!-- 表头。「YYYY年M月D日（周X）」每天首次动表都要改成当天 -->
+  <tr><td style="padding:22px 24px 16px 24px;border-bottom:3px solid #0f6b7a;">
+    <div style="font-size:23px;font-weight:bold;color:#0f6b7a;letter-spacing:1px;">今日 TODO</div>
+    <div style="font-size:13px;color:#77809e;padding-top:6px;">YYYY年M月D日（周X）</div>
+  </td></tr>
+
+  <!-- ===== 今日待办：三列，一行 = 一件当天的事 ===== -->
+  <tr><td style="padding:18px 24px 0 24px;">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;font-size:14px;">
+
+      <tr bgcolor="#0f6b7a" style="background-color:#0f6b7a;">
+        <!-- 状态：待办 / 进行中 / 已完成，三档固定，不许现造 -->
+        <td style="padding:11px 9px;border:1px solid #0f6b7a;color:#ffffff;font-weight:bold;width:64px;">状态</td>
+        <!-- 任务：一件动作写一行；太长换行写，不要拆成多行 -->
+        <td style="padding:11px 9px;border:1px solid #0f6b7a;color:#ffffff;font-weight:bold;">任务</td>
+        <!-- 备注：关联的语境、截止、归属，一句话即可 -->
+        <td style="padding:11px 9px;border:1px solid #0f6b7a;color:#ffffff;font-weight:bold;width:150px;">备注</td>
+      </tr>
+
+      <!-- 行模板 A · 待办：红色加粗 -->
+      <tr>
+        <td style="padding:12px 9px;border:1px solid #d8dced;color:#c9302c;font-weight:bold;">待办</td>
+        <td style="padding:12px 9px;border:1px solid #d8dced;color:#333333;line-height:1.7;"><b>要做的事标题</b></td>
+        <td style="padding:12px 9px;border:1px solid #d8dced;color:#77809e;font-size:12px;line-height:1.6;">关联 / 截止</td>
+      </tr>
+
+      <!-- 行模板 B · 进行中：蓝色加粗 -->
+      <tr>
+        <td style="padding:12px 9px;border:1px solid #d8dced;color:#1f3fa8;font-weight:bold;">进行中</td>
+        <td style="padding:12px 9px;border:1px solid #d8dced;color:#333333;line-height:1.7;"><b>正在做的事标题</b></td>
+        <td style="padding:12px 9px;border:1px solid #d8dced;color:#77809e;font-size:12px;line-height:1.6;">进行到哪了</td>
+      </tr>
+
+      <!-- 行模板 C · 已完成：整行灰字，任务加删除线 <s> -->
+      <tr>
+        <td style="padding:12px 9px;border:1px solid #d8dced;color:#7d8399;">已完成</td>
+        <td style="padding:12px 9px;border:1px solid #d8dced;color:#7d8399;line-height:1.7;"><s>做完的事标题</s></td>
+        <td style="padding:12px 9px;border:1px solid #d8dced;color:#9aa0b4;font-size:12px;line-height:1.6;">结果</td>
+      </tr>
+
+    </table>
+  </td></tr>
+
+  <!-- 页脚：状态说明 + 每日刷新规则。别放建议、别放提醒 -->
+  <tr><td style="padding:22px 24px 22px 24px;">
+    <div style="border-top:1px solid #e4e7f2;padding-top:12px;font-size:12px;color:#99a0bb;line-height:1.8;">
+      状态：<span style="color:#c9302c;font-weight:bold;">待办</span> / <span style="color:#1f3fa8;font-weight:bold;">进行中</span> / <span style="color:#7d8399;">已完成（划掉）</span>。<br>
+      只装当天的事；每天刷新表头日期，把过期没划掉的项标灰。与排期表互不读取。
+    </div>
+  </td></tr>
+
+</table>
+
+</td></tr>
+</table>
+</body>
+</html>
