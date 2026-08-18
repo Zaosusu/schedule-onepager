@@ -22,7 +22,7 @@
 
 ![排期表示例](docs/schedule-demo.png)
 
-> 仓库里 `examples/schedule-demo.html` 是这个排期表的**虚构数据示例模板**（打开是 HTML 源码，需点 GitHub 文件页的 *Preview* 标签才能看到渲染；用户使用时可 `cp examples/schedule-demo.html my/schedule.html` 当起点）。
+> `examples/schedule-demo.html` 是这张表的**虚构数据源文件**——GitHub 打开是 HTML 源码，没法直接预览渲染。用户使用时 `cp examples/schedule-demo.html my/schedule.html` 当起点填自己数据。要看真实渲染效果就是上面这张 PNG。
 
 ## 还有个「每日 TODO」模式（和排期表分开）
 
