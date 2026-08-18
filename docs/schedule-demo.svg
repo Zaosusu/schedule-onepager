@@ -1,0 +1,96 @@
+<svg viewBox="0 0 680 520" width="100%" xmlns="http://www.w3.org/2000/svg" role="img">
+<title>schedule-onepager 排期表示例</title>
+<desc>示例排期表渲染效果：主表 + 图例 + 页脚，数据全部虚构</desc>
+
+<rect x="40" y="40" width="600" height="468" rx="16" fill="#F4F6FB" stroke="#D8DCED" stroke-width="0.5"/>
+<rect x="56" y="52" width="568" height="444" rx="8" fill="#FFFFFF" stroke="#D8DCED" stroke-width="0.5"/>
+<rect x="56" y="52" width="568" height="20" fill="#FFF6E8" stroke="#F0DCC0" stroke-width="0.5"/>
+<text x="72" y="66" font-family="sans-serif" font-size="11" fill="#A0620A">示例文件 · 人名 / 活动 / 机构 / 电话 / 邮箱 / 地点全部虚构</text>
+<line x1="56" y1="72" x2="624" y2="72" stroke="#F0DCC0" stroke-width="0.5"/>
+<text x="72" y="94" font-family="sans-serif" font-size="17" font-weight="500" fill="#1F3FA8">我的排期表</text>
+<text x="72" y="112" font-family="sans-serif" font-size="11" fill="#77809E">更新：2026年3月9日（周一）</text>
+<line x1="56" y1="120" x2="624" y2="120" stroke="#1F3FA8" stroke-width="3"/>
+
+<rect x="56" y="122" width="568" height="24" fill="#1F3FA8"/>
+<text x="74" y="137" font-family="sans-serif" font-size="11" font-weight="500" fill="#FFFFFF">日期</text>
+<text x="162" y="137" font-family="sans-serif" font-size="11" font-weight="500" fill="#FFFFFF">星期</text>
+<text x="208" y="137" font-family="sans-serif" font-size="11" font-weight="500" fill="#FFFFFF">活动</text>
+<text x="308" y="137" font-family="sans-serif" font-size="11" font-weight="500" fill="#FFFFFF">身份</text>
+<text x="348" y="137" font-family="sans-serif" font-size="11" font-weight="500" fill="#FFFFFF">事项</text>
+<text x="548" y="137" font-family="sans-serif" font-size="11" font-weight="500" fill="#FFFFFF">倒计时</text>
+
+<g font-family="sans-serif">
+<rect x="56" y="146" width="568" height="36" fill="#F2F3F7"/>
+<text x="74" y="169" font-size="12" font-weight="500" fill="#7D8399">3月2日</text>
+<text x="162" y="169" font-size="12" fill="#7D8399">周一</text>
+<text x="208" y="169" font-size="12" font-weight="500" fill="#7D8399">社区开源日</text>
+<text x="308" y="169" font-size="12" fill="#7D8399">主导</text>
+<text x="348" y="169" font-size="12" fill="#7D8399">14:00 场地踏勘</text>
+<text x="548" y="169" font-size="12" font-weight="500" fill="#9AA0B4">已完成</text>
+
+<rect x="56" y="182" width="568" height="36" fill="#F2F3F7"/>
+<text x="74" y="205" font-size="12" font-weight="500" fill="#7D8399">3月5日</text>
+<text x="162" y="205" font-size="12" fill="#7D8399">周四</text>
+<text x="208" y="205" font-size="12" font-weight="500" fill="#7D8399">城西黑客松</text>
+<text x="308" y="205" font-size="12" font-weight="500" fill="#7D8399">顾问</text>
+<text x="348" y="205" font-size="12" fill="#7D8399">10:00 第一次碰面（顾问事宜）</text>
+<text x="548" y="205" font-size="12" font-weight="500" fill="#9AA0B4">已完成</text>
+
+<rect x="56" y="218" width="568" height="36" fill="#EEF4FF"/>
+<text x="74" y="241" font-size="12" font-weight="500" fill="#333333">3月9日</text>
+<text x="162" y="241" font-size="12" fill="#333333">周一</text>
+<text x="208" y="241" font-size="12" font-weight="500" fill="#1F3FA8">青年创作营</text>
+<text x="308" y="241" font-size="12" font-weight="500" fill="#333333">老师</text>
+<text x="348" y="241" font-size="12" fill="#333333">19:00 线上试讲 · 60 分钟</text>
+<text x="548" y="241" font-size="12" font-weight="500" fill="#C9302C">今天</text>
+
+<rect x="56" y="254" width="568" height="44" fill="#E8F4F6"/>
+<text x="74" y="275" font-size="12" font-weight="500" fill="#333333">3月14日</text>
+<text x="74" y="292" font-size="12" font-weight="500" fill="#333333">– 3月15日</text>
+<text x="162" y="275" font-size="12" fill="#C9302C">周六</text>
+<text x="162" y="292" font-size="12" fill="#C9302C">周日</text>
+<text x="208" y="281" font-size="12" font-weight="500" fill="#0F6B7A">城西黑客松</text>
+<text x="308" y="281" font-size="12" font-weight="500" fill="#333333">顾问</text>
+<text x="348" y="275" font-size="12" fill="#333333">3/14 签到 09:00-10:00 · 分组辅导全天</text>
+<text x="348" y="292" font-size="12" fill="#333333">3/15 评审 13:00-17:30 · 逐时段见下表</text>
+<text x="548" y="281" font-size="12" font-weight="500" fill="#C9302C">5 天</text>
+
+<rect x="56" y="298" width="568" height="44" fill="#F5EEFB"/>
+<text x="74" y="319" font-size="12" font-weight="500" fill="#333333">4月2日</text>
+<text x="74" y="336" font-size="12" font-weight="500" fill="#333333">– 4月4日</text>
+<text x="162" y="319" font-size="12" fill="#333333">周四</text>
+<text x="162" y="336" font-size="12" fill="#C9302C">周六</text>
+<text x="208" y="325" font-size="12" font-weight="500" fill="#6B2FA0">某职院 AI 课</text>
+<text x="308" y="325" font-size="12" font-weight="500" fill="#333333">老师</text>
+<text x="348" y="325" font-size="12" fill="#333333">出差 3 天　授课</text>
+<text x="548" y="325" font-size="12" font-weight="500" fill="#6B2FA0">24 天</text>
+
+<rect x="56" y="342" width="568" height="44" fill="#EEF4FF"/>
+<text x="74" y="363" font-size="12" font-weight="500" fill="#333333">5月18日</text>
+<text x="74" y="380" font-size="12" font-weight="500" fill="#333333">– 5月20日</text>
+<text x="162" y="363" font-size="12" fill="#333333">周一</text>
+<text x="162" y="380" font-size="12" fill="#333333">周三</text>
+<text x="208" y="369" font-size="12" font-weight="500" fill="#1F3FA8">青年创作营</text>
+<text x="308" y="369" font-size="12" font-weight="500" fill="#333333">评委</text>
+<text x="348" y="369" font-size="12" fill="#333333">终评　3 天全程参与</text>
+<text x="548" y="369" font-size="12" font-weight="500" fill="#1F3FA8">70 天</text>
+</g>
+
+<rect x="72" y="402" width="536" height="66" fill="#FAFBFD" stroke="#E4E7F2" stroke-width="0.5"/>
+<text x="88" y="420" font-family="sans-serif" font-size="10" fill="#8A91AB" letter-spacing="2">图 例</text>
+<rect x="88" y="428" width="26" height="12" fill="#E8F4F6" stroke="#CFD6E4" stroke-width="0.5"/>
+<text x="122" y="438" font-family="sans-serif" font-size="11" fill="#5A6180">城西黑客松</text>
+<rect x="222" y="428" width="26" height="12" fill="#EEF4FF" stroke="#CFD6E4" stroke-width="0.5"/>
+<text x="256" y="438" font-family="sans-serif" font-size="11" fill="#5A6180">青年创作营</text>
+<rect x="356" y="428" width="26" height="12" fill="#F5EEFB" stroke="#CFD6E4" stroke-width="0.5"/>
+<text x="390" y="438" font-family="sans-serif" font-size="11" fill="#5A6180">某职院 AI 课</text>
+<rect x="88" y="446" width="26" height="12" fill="#F0F7F1" stroke="#CFD6E4" stroke-width="0.5"/>
+<text x="122" y="456" font-family="sans-serif" font-size="11" fill="#5A6180">社区开源日</text>
+<rect x="222" y="446" width="26" height="12" fill="#F2F3F7" stroke="#CFD6E4" stroke-width="0.5"/>
+<text x="256" y="456" font-family="sans-serif" font-size="11" fill="#5A6180">已完成</text>
+<text x="356" y="456" font-family="sans-serif" font-size="11" font-weight="500" fill="#C9302C">红色星期 = 周末</text>
+<text x="470" y="456" font-family="sans-serif" font-size="11" font-weight="500" fill="#C9302C">红色倒计时 = 12 天内</text>
+
+<line x1="72" y1="482" x2="608" y2="482" stroke="#E4E7F2" stroke-width="0.5"/>
+<text x="72" y="498" font-family="sans-serif" font-size="10" fill="#99A0BB">本表只收录已确定日期的事项 · 页脚可放赛制规则、提交格式、对接人（示例，虚构）</text>
+</svg>
