@@ -51,6 +51,21 @@ cp template/todo.template.html my/todo.html
 
 跑 `examples/todo-demo.html` 看渲染效果（任务全部虚构）。
 
+## 还有个「每日历史记录」模式（排期表 / TODO 之外）
+
+排期表管「未来哪几天被占」，TODO 管「今天动手做什么」，历史记录管「每天**做了什么**」——三张表各管各的，互不读取。
+
+历史记录用 **SQLite**（`scripts/history.py` + `daily_history.db`），不走手写 HTML：HTML 只是 `export` 出来的浏览视图，追加永远走命令。好处是记录会一直累加也不乱，还能 `stats` 按日期/分类复盘。
+
+```bash
+python scripts/history.py add --date 2026-08-18 --cat 项目A --text "完成需求评审"
+python scripts/history.py list                 # 最近 20 条
+python scripts/history.py stats                # 按日期+分类计条数
+python scripts/history.py export               # 生成 每日历史记录.html
+```
+
+DB 路径自动解析：`--db` > 环境变量 `DAILY_HISTORY_DB` > 脚本同目录的 `daily_history.db` > `<skill根>/my/daily_history.db`。把自己 cp 到工作目录用时，自动命中同级的库。示例见 `examples/history-example.md`（数据全部虚构）。
+
 ## 三条设计判断
 
 **1. 一张表，原地覆盖。** 数据文件只有一个。不建副本、不建草稿、不按活动拆分——多一份就会有一份是过期的，而你不知道是哪一份。
@@ -147,6 +162,7 @@ scripts/
   countdown.py                    # 星期 + 倒计时计算；--which-year 用星期反推年份
   lint_schedule.py                # 发之前自查：邮件兼容性 + 表头日期是否过期
   send_schedule.py                # 读环境变量发 HTML 正文邮件（无附件）
+  history.py                      # 每日历史记录：SQLite 存每天做了什么，HTML 仅作导出视图
 my/                               # 你自己的表和配置，已 gitignore，仓库里不存在
 LICENSE                           # MIT
 ```
@@ -179,6 +195,7 @@ LICENSE                           # MIT
 ## 隐私
 
 - `my/` 和 `config.json` 在 `.gitignore` 里，个人行程和配置不会被提交
+- `daily_history.db`（无论落在 `my/` 还是工作目录）是个人流水账，绝不进仓库
 - 授权码**只走环境变量**，仓库里任何文件都不存
 - `examples/schedule-demo.html` 里的人、活动、机构、电话、邮箱、地点**全部虚构**
 - 排期表本身是敏感信息：它写明了你哪几天不在家。往外发之前想一下发给谁

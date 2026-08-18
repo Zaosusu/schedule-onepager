@@ -2,6 +2,10 @@
 my/
 config.json
 
+# 历史记录数据库（个人流水账，绝不进仓库）
+daily_history.db
+*.db
+
 # 渲染 / 导出产物
 out/
 *.ics
