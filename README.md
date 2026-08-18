@@ -179,6 +179,23 @@ LICENSE                           # MIT
 - **没有自动刷新。** 「重算全表时间状态」这条靠 AI 助手自觉 + linter 逮，不是脚本强制的
 - **不提醒、不同步、不生成 .ics。** 见开头那张对比表
 
+## 架构：skill 本体与个人数据分离
+
+本仓库同时装两种东西，靠 `.gitignore` 硬隔离：
+
+```
+skill 本体（可 push / 可公开分享）        个人数据（永不 push）
+├── SKILL.md  README.md  LICENSE          my/（整个目录被忽略）
+├── scripts/  template/  examples/        ├── personal.db（排期 + TODO + 历史）
+├── references/  docs/  config.example.json│   ├── 行程总表.html / 今日TODO.html
+└── config.json（示例，忽略真实配置）      │   └── 每日历史记录.html / 个人素材
+                                          └── 一切你的真实信息
+```
+
+- **日常用**：数据只写 `my/`（`python scripts/personal.py ...`），本地私有
+- **发布**：只 push skill 本体；push 前跑 `git status` 确认没有 `my/`、`*.db`、`config.json`、`settings.local.json`，再 `git commit` + `git push`
+- 规则细节见 SKILL.md「发布 / 脱敏 push 流程」章节
+
 ## 隐私
 
 - `my/` 和 `config.json` 在 `.gitignore` 里，个人行程和配置不会被提交
