@@ -9,6 +9,7 @@ daily_history.db
 # 渲染 / 导出产物
 out/
 *.ics
+/*.html
 
 # Python
 __pycache__/
