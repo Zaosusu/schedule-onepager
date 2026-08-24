@@ -137,7 +137,8 @@ python scripts/personal.py schedule delete --id N   # 使用者说「取消/不�
 # 今日待办（--date 省略默认今天）
 python scripts/personal.py todo add  --date 2026-08-19 --status 待办 --task "..." --note "..."
 python scripts/personal.py todo list [--date 2026-08-19] [--status 进行中]   # 默认只显示今天
-python scripts/personal.py todo export [--out my/今日TODO.html] [--date 2026-08-19]  # 默认写到 my/今日TODO.html
+python scripts/personal.py todo export [--out my/今日TODO.html] [--date 2026-08-19]              # 默认写到 my/今日TODO.html
+python scripts/personal.py todo export --status 已完成 [--out my/历史TODO.html]                # 导出历史已完成视图
 python scripts/personal.py todo set  --id N --status 已完成
 python scripts/personal.py todo done --id N
 

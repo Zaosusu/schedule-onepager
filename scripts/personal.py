@@ -286,41 +286,67 @@ def todo_set(args, conn):
 
 
 def todo_export(args, conn):
-    d = args.date or today_iso()
-    rows = conn.execute(
-        "SELECT id, status, task, note FROM todo WHERE todo_date=? ORDER BY id", (d,)
-    ).fetchall()
     color_map = {"待办": "#c9302c", "进行中": "#1f3fa8", "已完成": "#7d8399"}
     body = []
+
+    if args.status:
+        # 状态视图：跨日期筛选
+        status = args.status
+        rows = conn.execute(
+            "SELECT todo_date, status, task, note FROM todo WHERE status=? ORDER BY todo_date DESC, id",
+            (status,),
+        ).fetchall()
+        title = f"历史 TODO（{status}）"
+        header_color = "#1f3fa8"
+        subtitle = f"按状态「{status}」筛选 · 共 {len(rows)} 项 · 独立清单，不与排期表关联"
+        empty_msg = f'暂无状态为「{status}」的 TODO。'
+    else:
+        # 日期视图：默认今天
+        d = args.date or today_iso()
+        rows = conn.execute(
+            "SELECT status, task, note FROM todo WHERE todo_date=? ORDER BY id", (d,)
+        ).fetchall()
+        title = "今日 TODO"
+        header_color = "#0f6b7a"
+        weekday = ['周一','周二','周三','周四','周五','周六','周日'][datetime.strptime(d,'%Y-%m-%d').weekday()]
+        subtitle = f"{d}（{weekday}）· 独立清单，不与排期表关联"
+        empty_msg = f'{d} 暂无待办，发我今天的任务我记进来。'
+
     for r in rows:
-        c = color_map.get(r[1], "#333333")
-        strike = ' text-decoration:line-through;color:#99a0bb;' if r[1] == "已完成" else 'color:#333333;'
+        if args.status:
+            d_cell, st, task, note = r
+            date_badge = f'<span style="display:inline-block;background:#eef1f8;color:#5a6291;font-size:11px;padding:1px 6px;border-radius:3px;margin-right:6px;">{esc(d_cell)}</span>'
+        else:
+            st, task, note = r
+            date_badge = ""
+        c = color_map.get(st, "#333333")
+        strike = ' text-decoration:line-through;color:#99a0bb;' if st == "已完成" else 'color:#333333;'
         body.append(f"""      <tr>
-        <td style="padding:12px 9px;border:1px solid #d8dced;color:{c};font-weight:bold;">{esc(r[1])}</td>
-        <td style="padding:12px 9px;border:1px solid #d8dced;line-height:1.7;{strike}"><b>{esc(r[2])}</b></td>
-        <td style="padding:12px 9px;border:1px solid #d8dced;color:#77809e;font-size:12px;line-height:1.6;">{esc(r[3])}</td>
+        <td style="padding:12px 9px;border:1px solid #d8dced;color:{c};font-weight:bold;">{esc(st)}</td>
+        <td style="padding:12px 9px;border:1px solid #d8dced;line-height:1.7;{strike}">{date_badge}<b>{esc(task)}</b></td>
+        <td style="padding:12px 9px;border:1px solid #d8dced;color:#77809e;font-size:12px;line-height:1.6;">{esc(note)}</td>
       </tr>""")
     if not body:
         body.append('      <tr><td colspan="3" style="padding:14px 9px;border:1px solid #d8dced;color:#99a0bb;font-size:13px;text-align:center;">'
-                    f'{d} 暂无待办，发我今天的任务我记进来。</td></tr>')
+                    f'{empty_msg}</td></tr>')
     html = f"""<!DOCTYPE html>
 <html lang="zh-CN">
 <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>今日 TODO</title></head>
+<title>{title}</title></head>
 <body style="margin:0;padding:0;background-color:#f4f6fb;">
 <table bgcolor="#f4f6fb" role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#f4f6fb;">
 <tr><td align="center" style="padding:20px 10px;">
 <table bgcolor="#ffffff" role="presentation" width="760" cellpadding="0" cellspacing="0" border="0" style="width:760px;max-width:760px;background-color:#ffffff;border:1px solid #d8dced;font-family:'Microsoft YaHei','PingFang SC',Arial,sans-serif;">
-  <tr><td style="padding:22px 24px 16px 24px;border-bottom:3px solid #0f6b7a;">
-    <div style="font-size:23px;font-weight:bold;color:#0f6b7a;letter-spacing:1px;">今日 TODO</div>
-    <div style="font-size:13px;color:#77809e;padding-top:6px;">{d}（{['周一','周二','周三','周四','周五','周六','周日'][datetime.strptime(d,'%Y-%m-%d').weekday()]}）· 独立清单，不与排期表关联</div>
+  <tr><td style="padding:22px 24px 16px 24px;border-bottom:3px solid {header_color};">
+    <div style="font-size:23px;font-weight:bold;color:{header_color};letter-spacing:1px;">{title}</div>
+    <div style="font-size:13px;color:#77809e;padding-top:6px;">{subtitle}</div>
   </td></tr>
   <tr><td style="padding:18px 24px 0 24px;">
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;font-size:14px;">
-      <tr bgcolor="#0f6b7a" style="background-color:#0f6b7a;">
-        <td style="padding:11px 9px;border:1px solid #0f6b7a;color:#ffffff;font-weight:bold;width:64px;">状态</td>
-        <td style="padding:11px 9px;border:1px solid #0f6b7a;color:#ffffff;font-weight:bold;">任务</td>
-        <td style="padding:11px 9px;border:1px solid #0f6b7a;color:#ffffff;font-weight:bold;width:150px;">备注</td>
+      <tr bgcolor="{header_color}" style="background-color:{header_color};">
+        <td style="padding:11px 9px;border:1px solid {header_color};color:#ffffff;font-weight:bold;width:64px;">状态</td>
+        <td style="padding:11px 9px;border:1px solid {header_color};color:#ffffff;font-weight:bold;">任务</td>
+        <td style="padding:11px 9px;border:1px solid {header_color};color:#ffffff;font-weight:bold;width:150px;">备注</td>
       </tr>
 {chr(10).join(body)}
     </table>
@@ -328,7 +354,7 @@ def todo_export(args, conn):
   <tr><td style="padding:22px 24px 22px 24px;">
     <div style="border-top:1px solid #e4e7f2;padding-top:12px;font-size:12px;color:#99a0bb;line-height:1.8;">
       状态：<span style="color:#c9302c;font-weight:bold;">待办</span> / <span style="color:#1f3fa8;font-weight:bold;">进行中</span> / <span style="color:#7d8399;">已完成（划掉）</span>。<br>
-      数据源：personal.db（todo 表）。只装当天的事；与排期表互不干扰。
+      数据源：personal.db（todo 表）。{ '只装当天的事' if not args.status else '按状态筛选展示' }；与排期表互不干扰。
     </div>
   </td></tr>
 </table>
@@ -337,13 +363,18 @@ def todo_export(args, conn):
 </body>
 </html>
 """
-    out = args.out or "my/今日TODO.html"
+    if args.out:
+        out = args.out
+    elif args.status == "已完成":
+        out = "my/历史TODO.html"
+    else:
+        out = "my/今日TODO.html"
     out_dir = os.path.dirname(out)
     if out_dir:
         os.makedirs(out_dir, exist_ok=True)
     with open(out, "w", encoding="utf-8") as f:
         f.write(html)
-    print(f"已导出今日 TODO → {out}（{d}，{len(rows)} 项）")
+    print(f"已导出{title} → {out}（{len(rows)} 项）")
 
 
 # --------------------------------------------------------------------------- #
@@ -489,9 +520,10 @@ def build_parser():
     l.add_argument("--date")
     l.add_argument("--status")
     l.set_defaults(func=todo_list)
-    e = tps.add_parser("export", help="导出今日 TODO HTML")
+    e = tps.add_parser("export", help="导出今日/历史 TODO HTML")
     e.add_argument("--out")
     e.add_argument("--date")
+    e.add_argument("--status", help="按状态跨日期导出历史视图（例：已完成）")
     e.set_defaults(func=todo_export)
     st = tps.add_parser("set", help="设置状态")
     st.add_argument("--id", type=int, required=True)
