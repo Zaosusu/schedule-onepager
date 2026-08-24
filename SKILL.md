@@ -88,6 +88,21 @@ schedule 的 `role` 取值建议来自 `config.json` 的 `identities`（顾问 �
 
 使用者常发群公告截图、海报。**看不清、被划掉、被遮挡的文字不要猜**，明确说出哪一处读不出来、请对方补。整行被划掉的内容猜错会污染整张表。
 
+### 7. 状态极简铁律（表里只有「会发生的事」；过去=已完成；取消=不写/删掉）
+
+排期表的行只有两种含义，不要引入第三种状态：
+
+- **未来的事** → `status` 为空（默认），倒计时显示剩余天数。
+- **发生过的事** → `status='已完成'`，倒计时显示「已完成」。判断标准：`iso_date` 已过、且这行还在表里（没被删）。**「过了」就视为「办了」**，绝不显示「已过期」。
+
+**取消的事根本不进表，也不留痕：**
+
+- 录入前就知道会取消 → 直接不写。
+- 已经写进表、后来取消 → 用 `schedule delete --id N` **物理删掉整行**（不留「已取消」灰行、不留历史）。
+- 使用者没说「取消」、日期又过了 → 当已完成处理，不要去问「办了没」（默认已完成）。
+
+**没有「已过期」这个状态。** 「已过期」是旧逻辑误标，已彻底移除——只要日期过了还在表里，就是「已完成」。agent 不需要再为过去的事做待核对。
+
 ## 收到新排期信息时的处理流程
 
 **1. 算准星期和倒计时** —— 用 `iso_date` + 导出日自动算，不用心算。年份存疑时用星期反推：
@@ -117,11 +132,12 @@ python scripts/personal.py schedule add  --date-label "8月20日" --iso 2026-08-
 python scripts/personal.py schedule list [--verbose]
 python scripts/personal.py schedule export [--out 行程总表.html] [--today 2026-08-18]
 python scripts/personal.py schedule done --id N
+python scripts/personal.py schedule delete --id N   # 使用者说「取消/不办」时：物理删行，不留痕（表里只留会发生的事）
 
 # 今日待办（--date 省略默认今天）
 python scripts/personal.py todo add  --date 2026-08-19 --status 待办 --task "..." --note "..."
-python scripts/personal.py todo list [--date 2026-08-19] [--status 进行中]
-python scripts/personal.py todo export [--out 今日TODO.html] [--date 2026-08-19]
+python scripts/personal.py todo list [--date 2026-08-19] [--status 进行中]   # 默认只显示今天
+python scripts/personal.py todo export [--out my/今日TODO.html] [--date 2026-08-19]  # 默认写到 my/今日TODO.html
 python scripts/personal.py todo set  --id N --status 已完成
 python scripts/personal.py todo done --id N
 
@@ -143,7 +159,7 @@ python scripts/personal.py history export [--out 每日历史记录.html]
 
 - 连续多天合并成一行（例：「8月21日 – 8月22日」一行，细分写在「事项」列）
 - 周末星期红色 `#c9302c`；`highlight_days`（默认 12）天内的倒计时红色加粗
-- 已过去的行（status=已完成 或 iso_date < 今天）统一灰底灰字，倒计时列改「已完成」/「已过期」
+- 已过去的行（iso_date < 今天）统一灰底灰字，倒计时列一律显示「已完成」（见硬规则 7：表里只留会发生的事，过去=已完成，不存在「已过期」「已取消」）
 
 主表之后：图例、身份说明、逐时段细表（仅在有官方逐时段安排时从 detail 渲染）、页脚。
 

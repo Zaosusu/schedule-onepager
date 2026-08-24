@@ -13,7 +13,7 @@ schedule-onepager · 统一数据层 CLI
 永不手工编辑。三张表之间互不读取、互不合并（硬边界）。
 
 子命令：
-  personal.py schedule add|list|export|done
+  personal.py schedule add|list|export|done|delete
   personal.py todo      add|list|export|done|set
   personal.py history   add|list|stats|export
 
@@ -112,7 +112,14 @@ def html_lines(text):
 
 
 def countdown_label(iso_date, status, today):
-    """返回 (标签文本, 是否高亮红)。"""
+    """返回 (标签文本, 是否高亮红)。
+
+    状态模型极简：表里的行只有两种含义——
+      - 已完成：过去发生的事（日期已过、未被删除）
+      - （空）：未来的事
+    取消的事根本不进表（被 delete 物理删掉），所以不存在「已取消」，
+    也不存在「已过期」——只要日期已过且在表里，就视为已发生 = 已完成。
+    """
     if status and status.strip() == "已完成":
         return "已完成", False
     if not iso_date:
@@ -123,7 +130,7 @@ def countdown_label(iso_date, status, today):
         return "待定", False
     days = (d - today).days
     if days < 0:
-        return "已过期", False
+        return "已完成", False   # 日期已过且仍在表内 = 已发生 = 已完成
     if days == 0:
         return "今天", True
     return f"{days} 天", days <= 12
@@ -150,7 +157,8 @@ def schedule_list(args, conn):
         "FROM schedule ORDER BY sort_key"
     ).fetchall()
     for r in rows:
-        flag = "✓" if r[6] == "已完成" else " "
+        label, _ = countdown_label(r[1], r[6], date.today())
+        flag = "✓" if label == "已完成" else " "
         print(f"[{flag}] {r[1]} {r[2]} | {r[3]} | {r[4]} | {r[5]}")
         if args.verbose and r[5]:
             print(f"      └─ {r[5]}")
@@ -162,8 +170,20 @@ def schedule_done(args, conn):
     print(f"schedule #{args.id} → 已完成")
 
 
+def schedule_delete(args, conn):
+    conn.execute("DELETE FROM schedule WHERE id=?", (args.id,))
+    conn.commit()
+    print(f"schedule #{args.id} → 已删除（取消 / 不办的事项不保留，不留痕）")
+
+
 def schedule_export(args, conn):
     today = datetime.strptime(args.today, "%Y-%m-%d").date() if args.today else date.today()
+    # 过去发生、status 仍为空的事项 = 已完成：批量转正，保持 DB 与视图一致
+    conn.execute(
+        "UPDATE schedule SET status='已完成' WHERE iso_date IS NOT NULL AND iso_date < ? AND (status IS NULL OR status='')",
+        (today.isoformat(),),
+    )
+    conn.commit()
     rows = conn.execute(
         "SELECT date_label, iso_date, weekday, title, role, detail, status "
         "FROM schedule ORDER BY sort_key"
@@ -171,7 +191,7 @@ def schedule_export(args, conn):
     body = []
     for r in rows:
         label, red = countdown_label(r[1], r[6], today)
-        cd_color = "#c9302c" if red else ("#9aa0b4" if label in ("已完成", "已过期", "待定") else "#333333")
+        cd_color = "#c9302c" if red else ("#9aa0b4" if label in ("已完成", "待定") else "#333333")
         cd = f'<td style="padding:12px 9px;border:1px solid #d8dced;color:{cd_color};font-weight:bold;">{esc(label)}</td>'
         muted = ' color:#7d8399;' if r[6] == "已完成" else ''
         body.append(f"""      <tr>
@@ -238,19 +258,22 @@ def todo_add(args, conn):
 
 
 def todo_list(args, conn):
+    # 默认只显示今天（skill 设计：todo 只装当天的事）
     if args.date:
+        d = args.date
+    elif args.status:
+        d = None
+    else:
+        d = today_iso()
+    if d:
         rows = conn.execute(
             "SELECT id, status, task, note FROM todo WHERE todo_date=? ORDER BY id",
-            (args.date,),
-        ).fetchall()
-    elif args.status:
-        rows = conn.execute(
-            "SELECT id, status, task, note FROM todo WHERE status=? ORDER BY todo_date DESC, id",
-            (args.status,),
+            (d,),
         ).fetchall()
     else:
         rows = conn.execute(
-            "SELECT id, status, task, note FROM todo ORDER BY todo_date DESC, id"
+            "SELECT id, status, task, note FROM todo WHERE status=? ORDER BY todo_date DESC, id",
+            (args.status,),
         ).fetchall()
     for r in rows:
         print(f"[{r[1]}] #{r[0]} {r[2]}  — {r[3]}")
@@ -314,7 +337,10 @@ def todo_export(args, conn):
 </body>
 </html>
 """
-    out = args.out or "今日TODO.html"
+    out = args.out or "my/今日TODO.html"
+    out_dir = os.path.dirname(out)
+    if out_dir:
+        os.makedirs(out_dir, exist_ok=True)
     with open(out, "w", encoding="utf-8") as f:
         f.write(html)
     print(f"已导出今日 TODO → {out}（{d}，{len(rows)} 项）")
@@ -446,6 +472,9 @@ def build_parser():
     dn = sps.add_parser("done", help="标记已完成")
     dn.add_argument("--id", type=int, required=True)
     dn.set_defaults(func=schedule_done)
+    dl = sps.add_parser("delete", help="删除整行（用于取消/不办的事项，不留痕）")
+    dl.add_argument("--id", type=int, required=True)
+    dl.set_defaults(func=schedule_delete)
 
     # todo
     tp = sub.add_parser("todo", help="今日待办")
