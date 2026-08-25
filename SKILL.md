@@ -151,6 +151,46 @@ python scripts/personal.py history export [--out 每日历史记录.html]
 
 零第三方依赖（仅标准库 sqlite3 / argparse / datetime）。
 
+## 自动邮件提醒（automation）—— 可选功能，需用户手动启用
+
+本 skill 自带 `scripts/reminder.py`，支持两种提醒模式：
+
+1. **到时提醒（`check`）**：扫描今日 TODO 里的 `HH:MM` 时间点，未来 60 分钟内且未发过的 → 发邮件提醒。
+2. **前夜预告（`preview`）**：扫描明日 `schedule` 条目，有行程且当天未发过的 → 发「明日行程预告」邮件。
+
+去重机制：`my/reminder_state.json` 记录已发送的提醒 key，同一 key 不重复发。
+
+```bash
+# 手动触发检查
+python scripts/reminder.py check        # 今日到时提醒
+python scripts/reminder.py preview      # 明日预告
+```
+
+提醒邮件规则：
+- 收件人固定为使用者邮箱。
+- 到时提醒主题：`📋 行程提醒`；正文简洁列出任务 + 时间 + 距现在几分钟。
+- 前夜预告主题：`🌙 明日行程预告`；正文列出日期、星期、所有明日条目。
+- 无提醒时静默结束，不发邮件。
+
+### ⚠️ 启用前必读
+
+**此功能默认不启用。** 创建 automation 意味着授权 agent 定时发送邮件，**必须经过使用者明确同意**。
+
+如需启用，按以下两步操作：
+
+**Step 1 — 确认收件人**  
+将 automation prompt 中的收件人邮箱 `178893717@qq.com` 替换为自己的邮箱。
+
+**Step 2 — 创建 automation**  
+在 WorkBuddy 中创建以下两个 automation（或让 agent 帮你创建，前提是已征得同意）：
+
+| 名称 | 触发频率 | Prompt 要点 |
+|---|---|---|
+| `Schedule Reminder Check` | HOURLY | 运行 `python scripts/reminder.py check`， reminders 非空时发邮件 |
+| `Tomorrow Schedule Preview` | DAILY;BYHOUR=22;BYMINUTE=0 | 运行 `python scripts/reminder.py preview`， items 非空且 sent=false 时发邮件 |
+
+启用后，WorkBuddy 关机期间错过的提醒**不会补发**，开机后 automation 会继续按新周期触发。
+
 ## 表格结构（schedule 导出）
 
 **主表**（按 `iso_date` 升序，一行 = 一个连续档期）：
