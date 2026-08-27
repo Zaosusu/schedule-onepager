@@ -377,6 +377,72 @@ def todo_export(args, conn):
     print(f"已导出{title} → {out}（{len(rows)} 项）")
 
 
+def todo_export_history(args, conn):
+    """按日期分组导出全部 TODO 历史（类似 history export 的每日流水账）。"""
+    rows = conn.execute(
+        "SELECT todo_date, status, task, note FROM todo ORDER BY todo_date DESC, id"
+    ).fetchall()
+    if not rows:
+        print("暂无 TODO 历史")
+        return
+
+    # 按日期分组
+    groups = {}
+    for r in rows:
+        groups.setdefault(r[0], []).append(r[1:])
+
+    today = date.today()
+    sections = []
+    color_map = {"待办": "#c9302c", "进行中": "#1f3fa8", "已完成": "#7d8399"}
+    for d in sorted(groups.keys(), reverse=True):
+        items = []
+        for st, task, note in groups[d]:
+            c = color_map.get(st, "#333333")
+            strike = ' text-decoration:line-through;color:#99a0bb;' if st == "已完成" else 'color:#333333;'
+            items.append(f'      <tr><td style="padding:11px 9px;border:1px solid #d8dced;color:{c};font-weight:bold;width:64px;vertical-align:top;">{esc(st)}</td>'
+                         f'<td style="padding:11px 9px;border:1px solid #d8dced;line-height:1.7;{strike}"><b>{esc(task)}</b></td>'
+                         f'<td style="padding:11px 9px;border:1px solid #d8dced;color:#77809e;font-size:12px;line-height:1.6;vertical-align:top;">{esc(note)}</td></tr>')
+        weekday = ['周一','周二','周三','周四','周五','周六','周日'][datetime.strptime(d,'%Y-%m-%d').weekday()]
+        sections.append(f"""  <tr><td style="padding:18px 24px 0 24px;">
+    <div style="font-size:17px;font-weight:bold;color:#1f3fa8;border-left:4px solid #1f3fa8;padding-left:10px;">{esc(d)}（{weekday}）</div>
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;font-size:14px;margin-top:10px;">
+{chr(10).join(items)}
+    </table>
+  </td></tr>""")
+
+    html = f"""<!DOCTYPE html>
+<html lang="zh-CN">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>每日 TODO 历史</title></head>
+<body style="margin:0;padding:0;background-color:#f4f6fb;">
+<table bgcolor="#f4f6fb" role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#f4f6fb;">
+<tr><td align="center" style="padding:20px 10px;">
+<table bgcolor="#ffffff" role="presentation" width="760" cellpadding="0" cellspacing="0" border="0" style="width:760px;max-width:760px;background-color:#ffffff;border:1px solid #d8dced;font-family:'Microsoft YaHei','PingFang SC',Arial,sans-serif;">
+  <tr><td style="padding:22px 24px 16px 24px;border-bottom:3px solid #1f3fa8;">
+    <div style="font-size:23px;font-weight:bold;color:#1f3fa8;letter-spacing:1px;">每日 TODO 历史</div>
+    <div style="font-size:13px;color:#77809e;padding-top:6px;">更新：{today.strftime('%Y年%m月%d日')}（{['周一','周二','周三','周四','周五','周六','周日'][today.weekday()]}）· 由 personal.db 导出 · 按日期倒序</div>
+  </td></tr>
+{chr(10).join(sections)}
+  <tr><td style="padding:22px 24px 22px 24px;">
+    <div style="border-top:1px solid #e4e7f2;padding-top:12px;font-size:12px;color:#99a0bb;line-height:1.8;">
+      数据源：personal.db（todo 表）。按日期分组展示全部历史，与排期表互不干扰。
+    </div>
+  </td></tr>
+</table>
+</td></tr>
+</table>
+</body>
+</html>
+"""
+    out = args.out or "每日TODO历史.html"
+    out_dir = os.path.dirname(out)
+    if out_dir:
+        os.makedirs(out_dir, exist_ok=True)
+    with open(out, "w", encoding="utf-8") as f:
+        f.write(html)
+    print(f"已导出每日 TODO 历史 → {out}（{len(groups)} 天）")
+
+
 # --------------------------------------------------------------------------- #
 # history 子命令
 # --------------------------------------------------------------------------- #
@@ -525,6 +591,9 @@ def build_parser():
     e.add_argument("--date")
     e.add_argument("--status", help="按状态跨日期导出历史视图（例：已完成）")
     e.set_defaults(func=todo_export)
+    eh = tps.add_parser("export-history", help="按日期分组导出全部 TODO 历史流水账")
+    eh.add_argument("--out")
+    eh.set_defaults(func=todo_export_history)
     st = tps.add_parser("set", help="设置状态")
     st.add_argument("--id", type=int, required=True)
     st.add_argument("--status", required=True)

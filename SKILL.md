@@ -138,7 +138,8 @@ python scripts/personal.py schedule delete --id N   # 使用者说「取消/不�
 python scripts/personal.py todo add  --date 2026-08-19 --status 待办 --task "..." --note "..."
 python scripts/personal.py todo list [--date 2026-08-19] [--status 进行中]   # 默认只显示今天
 python scripts/personal.py todo export [--out my/今日TODO.html] [--date 2026-08-19]              # 默认写到 my/今日TODO.html
-python scripts/personal.py todo export --status 已完成 [--out my/历史TODO.html]                # 导出历史已完成视图
+python scripts/personal.py todo export-history [--out 每日TODO历史.html]                        # 历史 TODO 标准视图：按日期分组导出全部 TODO 历史流水账（每天一个区块）
+python scripts/personal.py todo export --status 已完成 [--out 历史TODO_按状态.html]            # 附加能力（非主视图）：仅按状态跨日期筛选，不要把它当「历史 TODO」主视图
 python scripts/personal.py todo set  --id N --status 已完成
 python scripts/personal.py todo done --id N
 
