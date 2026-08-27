@@ -1,15 +1,15 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-schedule-onepager · 邮件提醒触发器
+schedule-onepager · 邮件提醒触发器（直连 SMTP，免去两步确认）
 =====================================
 
 两种模式：
-  check   —— 扫描今日 TODO 里的具体时间点，输出待发送的「到时提醒」
-  preview —— 扫描明日 schedule，输出待发送的「前夜预告」
+  check   —— 扫描今日 TODO 里的具体时间点，到点前直接发邮件
+  preview —— 扫描明日 schedule，到点前直接发「前夜预告」
 
 状态文件 my/reminder_state.json 记录已发送的提醒，避免重复。
-输出 JSON 到 stdout，供 automation prompt 读取后用 QQ 邮箱发送。
+直接通过 my/smtp_config.json 配置的 SMTP 发送，不走 QQ 邮箱连接器。
 """
 
 import argparse
@@ -17,12 +17,17 @@ import json
 import os
 import re
 import sys
+import smtplib
 from datetime import date, datetime, timedelta
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
 import sqlite3
 
 SKILL_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DB_PATH = os.path.join(SKILL_ROOT, "my", "personal.db")
 STATE_PATH = os.path.join(SKILL_ROOT, "my", "reminder_state.json")
+CONFIG_PATH = os.path.join(SKILL_ROOT, "my", "smtp_config.json")
+RECIPIENT = "178893717@qq.com"
 
 
 def resolve_today(args_today=None):
@@ -48,6 +53,31 @@ def save_state(state):
         json.dump(state, f, ensure_ascii=False, indent=2)
 
 
+def load_smtp_config():
+    if not os.path.exists(CONFIG_PATH):
+        raise FileNotFoundError(f"找不到 SMTP 配置文件：{CONFIG_PATH}")
+    with open(CONFIG_PATH, "r", encoding="utf-8") as f:
+        return json.load(f)
+
+
+def send_email(subject, body, to=None):
+    if to is None:
+        to = RECIPIENT
+    cfg = load_smtp_config()
+    msg = MIMEMultipart()
+    msg["From"] = cfg["sender_email"]
+    msg["To"] = to
+    msg["Subject"] = subject
+    msg.attach(MIMEText(body, "plain", "utf-8"))
+
+    server = smtplib.SMTP_SSL(cfg["smtp_server"], cfg["smtp_port"])
+    try:
+        server.login(cfg["sender_email"], cfg["sender_password"])
+        server.sendmail(cfg["sender_email"], [to], msg.as_string())
+    finally:
+        server.quit()
+
+
 def extract_times(text):
     """从文本中提取 HH:MM 时间列表。"""
     if not text:
@@ -60,7 +90,7 @@ def time_to_minutes(h, m):
 
 
 def cmd_check(args):
-    """扫描今日 TODO 的到时提醒。"""
+    """扫描今日 TODO 的到时提醒，到点前直接发邮件。"""
     today = resolve_today(args.today)
     now = datetime.now()
     conn = get_conn()
@@ -73,7 +103,7 @@ def cmd_check(args):
     state = load_state()
     reminded = state.setdefault("todo_reminded", {})
 
-    reminders = []
+    sent = []
     for tid, task, note in rows:
         times = extract_times(task + " " + (note or ""))
         if not times:
@@ -92,19 +122,23 @@ def cmd_check(args):
             if key in reminded:
                 continue
             reminded[key] = now.isoformat()
-            reminders.append({
-                "todo_id": tid,
-                "task": task,
-                "time": f"{h:02d}:{m:02d}",
-                "delta_min": round(delta),
-            })
+            subject = f"📋 行程提醒：{h:02d}:{m:02d} {task}"
+            body = f"提醒：{h:02d}:{m:02d} 有「{task}」，距现在约 {int(delta)} 分钟。"
+            try:
+                send_email(subject, body)
+                sent.append({"todo_id": tid, "task": task, "time": f"{h:02d}:{m:02d}"})
+            except Exception as e:
+                print(f"✗ 发送失败（#{tid} {task}）：{e}", file=sys.stderr)
 
     save_state(state)
-    print(json.dumps({"mode": "check", "reminders": reminders}, ensure_ascii=False))
+    if sent:
+        print(json.dumps({"mode": "check", "sent": sent}, ensure_ascii=False))
+    else:
+        print(json.dumps({"mode": "check", "sent": []}, ensure_ascii=False))
 
 
 def cmd_preview(args):
-    """扫描明日 schedule 的前夜预告。"""
+    """扫描明日 schedule 的前夜预告，直接发邮件。"""
     today = resolve_today(args.today)
     tomorrow = today + timedelta(days=1)
     conn = get_conn()
@@ -132,9 +166,24 @@ def cmd_preview(args):
             "detail": r[4],
         })
 
-    previewed[key] = today.isoformat()
-    save_state(state)
-    print(json.dumps({"mode": "preview", "sent": False, "date": key, "items": items}, ensure_ascii=False))
+    if items:
+        lines = [f"明天（{key}）行程：\n"]
+        for it in items:
+            lines.append(f"- {it['date_label']} {it['weekday']}｜{it['title']}｜{it['role']}")
+            if it["detail"]:
+                lines.append(f"  {it['detail']}")
+        body = "\n".join(lines)
+        subject = f"🌙 明日行程预告（{key}）"
+        try:
+            send_email(subject, body)
+            previewed[key] = today.isoformat()
+            save_state(state)
+            print(json.dumps({"mode": "preview", "sent": True, "date": key, "items": items}, ensure_ascii=False))
+        except Exception as e:
+            print(f"✗ 发送失败：{e}", file=sys.stderr)
+            sys.exit(1)
+    else:
+        print(json.dumps({"mode": "preview", "sent": False, "date": key, "items": []}, ensure_ascii=False))
 
 
 def main():
