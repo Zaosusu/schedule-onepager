@@ -152,12 +152,20 @@ def schedule_add(args, conn):
 
 
 def schedule_list(args, conn):
-    rows = conn.execute(
-        "SELECT id, date_label, weekday, title, role, detail, status, iso_date "
-        "FROM schedule ORDER BY sort_key"
-    ).fetchall()
+    today = date.today()
+    if args.all:
+        rows = conn.execute(
+            "SELECT id, date_label, weekday, title, role, detail, status, iso_date "
+            "FROM schedule ORDER BY sort_key"
+        ).fetchall()
+    else:
+        rows = conn.execute(
+            "SELECT id, date_label, weekday, title, role, detail, status, iso_date "
+            "FROM schedule WHERE iso_date >= ? ORDER BY sort_key",
+            (today.isoformat(),),
+        ).fetchall()
     for r in rows:
-        label, _ = countdown_label(r[1], r[6], date.today())
+        label, _ = countdown_label(r[1], r[6], today)
         flag = "✓" if label == "已完成" else " "
         print(f"[{flag}] {r[1]} {r[2]} | {r[3]} | {r[4]} | {r[5]}")
         if args.verbose and r[5]:
@@ -184,10 +192,17 @@ def schedule_export(args, conn):
         (today.isoformat(),),
     )
     conn.commit()
-    rows = conn.execute(
-        "SELECT date_label, iso_date, weekday, title, role, detail, status "
-        "FROM schedule ORDER BY sort_key"
-    ).fetchall()
+    if args.all:
+        rows = conn.execute(
+            "SELECT date_label, iso_date, weekday, title, role, detail, status "
+            "FROM schedule ORDER BY sort_key"
+        ).fetchall()
+    else:
+        rows = conn.execute(
+            "SELECT date_label, iso_date, weekday, title, role, detail, status "
+            "FROM schedule WHERE iso_date >= ? ORDER BY sort_key",
+            (today.isoformat(),),
+        ).fetchall()
     body = []
     for r in rows:
         label, red = countdown_label(r[1], r[6], today)
@@ -286,7 +301,7 @@ def todo_set(args, conn):
 
 
 def todo_export(args, conn):
-    color_map = {"待办": "#c9302c", "进行中": "#1f3fa8", "已完成": "#7d8399"}
+    color_map = {"待办": "#c9302c", "进行中": "#1f3fa8", "已完成": "#7d8399", "未完成": "#ff6600"}
     body = []
 
     if args.status:
@@ -393,7 +408,7 @@ def todo_export_history(args, conn):
 
     today = date.today()
     sections = []
-    color_map = {"待办": "#c9302c", "进行中": "#1f3fa8", "已完成": "#7d8399"}
+    color_map = {"待办": "#c9302c", "进行中": "#1f3fa8", "已完成": "#7d8399", "未完成": "#ff6600"}
     for d in sorted(groups.keys(), reverse=True):
         items = []
         for st, task, note in groups[d]:
@@ -561,10 +576,12 @@ def build_parser():
     a.set_defaults(func=schedule_add)
     l = sps.add_parser("list", help="列出排期")
     l.add_argument("--verbose", action="store_true")
+    l.add_argument("--all", action="store_true", help="显示全部（含历史/已过期）")
     l.set_defaults(func=schedule_list)
     e = sps.add_parser("export", help="导出排期表 HTML")
     e.add_argument("--out")
     e.add_argument("--today")
+    e.add_argument("--all", action="store_true", help="导出全部（含历史/已过期）")
     e.set_defaults(func=schedule_export)
     dn = sps.add_parser("done", help="标记已完成")
     dn.add_argument("--id", type=int, required=True)

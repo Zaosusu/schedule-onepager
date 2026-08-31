@@ -129,8 +129,8 @@ python scripts/personal.py schedule export --out 行程总表.html
 ```bash
 # 排期表
 python scripts/personal.py schedule add  --date-label "8月20日" --iso 2026-08-20 --weekday 周四 --title ... --role ... --detail ... [--status 已完成]
-python scripts/personal.py schedule list [--verbose]
-python scripts/personal.py schedule export [--out 行程总表.html] [--today 2026-08-18]
+python scripts/personal.py schedule list [--verbose] [--all]   # 默认只显示今天及以后；--all 显示全部（含历史/已过期）
+python scripts/personal.py schedule export [--out 行程总表.html] [--today 2026-08-18] [--all]  # 默认只导出今天及以后；--all 导出全部
 python scripts/personal.py schedule done --id N
 python scripts/personal.py schedule delete --id N   # 使用者说「取消/不办」时：物理删行，不留痕（表里只留会发生的事）
 
@@ -165,6 +165,8 @@ python scripts/personal.py history export [--out 每日历史记录.html]
 # 手动触发检查
 python scripts/reminder.py check        # 今日到时提醒（直连 SMTP）
 python scripts/reminder.py preview      # 明日预告（直连 SMTP）
+python scripts/reminder.py send --subject "主题" --body "正文"   # 发送任意内容邮件（直连 SMTP，免两步确认）
+# 可选 --to 指定收件人，缺省用 my/smtp_config.json 的默认收件人
 ```
 
 提醒邮件规则：
