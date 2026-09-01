@@ -11,6 +11,12 @@ out/
 *.ics
 /*.html
 
+# 运行产物：skill 的测试下载、缓存、导出中间物等，绝不进仓库
+data/
+
+# WorkBuddy / 编辑器客户端在本目录生成的 automations、memory 等本地数据
+.workbuddy/
+
 # Python
 __pycache__/
 *.py[cod]

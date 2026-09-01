@@ -186,15 +186,33 @@ def cmd_preview(args):
         print(json.dumps({"mode": "preview", "sent": False, "date": key, "items": []}, ensure_ascii=False))
 
 
+def cmd_send(args):
+    """向指定/默认收件人发送任意内容邮件（直连 SMTP，免两步确认）。"""
+    subject = args.subject or "WorkBuddy 通知"
+    body = args.body or ""
+    to = args.to
+    try:
+        send_email(subject, body, to=to)
+        print(json.dumps({"mode": "send", "ok": True, "to": to or RECIPIENT}, ensure_ascii=False))
+    except Exception as e:
+        print(f"✗ 发送失败：{e}", file=sys.stderr)
+        sys.exit(1)
+
+
 def main():
     p = argparse.ArgumentParser()
-    p.add_argument("mode", choices=["check", "preview"])
+    p.add_argument("mode", choices=["check", "preview", "send"])
     p.add_argument("--today")
+    p.add_argument("--subject", help="send 模式：邮件主题")
+    p.add_argument("--body", help="send 模式：邮件正文（纯文本）")
+    p.add_argument("--to", help="send 模式：收件人，缺省用 my/smtp_config.json 的默认收件人")
     args = p.parse_args()
     if args.mode == "check":
         cmd_check(args)
-    else:
+    elif args.mode == "preview":
         cmd_preview(args)
+    else:
+        cmd_send(args)
 
 
 if __name__ == "__main__":
