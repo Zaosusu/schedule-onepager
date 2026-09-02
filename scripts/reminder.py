@@ -60,15 +60,34 @@ def load_smtp_config():
         return json.load(f)
 
 
-def send_email(subject, body, to=None):
+def html_to_text(html):
+    """HTML → 纯文本兜底（给那些只显示 text/plain 的客户端）。"""
+    import re as _re
+    text = _re.sub(r"(?is)<(script|style|head).*?</\1>", " ", html)
+    text = _re.sub(r"(?i)<br\s*/?>", "\n", text)
+    text = _re.sub(r"(?i)</(tr|div|p|h[1-6]|table)>", "\n", text)
+    text = _re.sub(r"(?i)</td>", "  ", text)
+    text = _re.sub(r"<[^>]+>", "", text)
+    text = text.replace("&nbsp;", " ").replace("&amp;", "&").replace("&lt;", "<").replace("&gt;", ">")
+    lines = [ln.strip() for ln in text.splitlines()]
+    return "\n".join(ln for ln in lines if ln)
+
+
+def send_email(subject, body, to=None, html=False):
     if to is None:
         to = RECIPIENT
     cfg = load_smtp_config()
-    msg = MIMEMultipart()
+    # 邮件正文：HTML 渲染 + text/plain 兜底（手机端打不开附件，故不挂附件）
+    if html:
+        msg = MIMEMultipart("alternative")
+        msg.attach(MIMEText(html_to_text(body), "plain", "utf-8"))
+        msg.attach(MIMEText(body, "html", "utf-8"))
+    else:
+        msg = MIMEMultipart()
+        msg.attach(MIMEText(body, "plain", "utf-8"))
     msg["From"] = cfg["sender_email"]
     msg["To"] = to
     msg["Subject"] = subject
-    msg.attach(MIMEText(body, "plain", "utf-8"))
 
     server = smtplib.SMTP_SSL(cfg["smtp_server"], cfg["smtp_port"])
     try:
@@ -187,13 +206,25 @@ def cmd_preview(args):
 
 
 def cmd_send(args):
-    """向指定/默认收件人发送任意内容邮件（直连 SMTP，免两步确认）。"""
+    """向指定/默认收件人发送任意内容邮件（直连 SMTP，免两步确认）。
+
+    正文可为纯文本或 HTML：
+      - 传 --html-file 路径 → 直接把该 HTML 文件作为邮件正文（渲染版）
+      - 传 --html → 强制把 --body 当 HTML 发
+      - 否则自动识别：body 看起来像 HTML（含 <html / <table）也按 HTML 发
+    """
     subject = args.subject or "WorkBuddy 通知"
-    body = args.body or ""
     to = args.to
+    if args.html_file:
+        with open(args.html_file, encoding="utf-8") as f:
+            body = f.read()
+        html = True
+    else:
+        body = args.body or ""
+        html = args.html or bool(body) and ("<html" in body.lower() or "<table" in body.lower())
     try:
-        send_email(subject, body, to=to)
-        print(json.dumps({"mode": "send", "ok": True, "to": to or RECIPIENT}, ensure_ascii=False))
+        send_email(subject, body, to=to, html=html)
+        print(json.dumps({"mode": "send", "ok": True, "to": to or RECIPIENT, "html": html}, ensure_ascii=False))
     except Exception as e:
         print(f"✗ 发送失败：{e}", file=sys.stderr)
         sys.exit(1)
@@ -204,7 +235,9 @@ def main():
     p.add_argument("mode", choices=["check", "preview", "send"])
     p.add_argument("--today")
     p.add_argument("--subject", help="send 模式：邮件主题")
-    p.add_argument("--body", help="send 模式：邮件正文（纯文本）")
+    p.add_argument("--body", help="send 模式：邮件正文（纯文本，或自动识别的 HTML）")
+    p.add_argument("--html", action="store_true", help="send 模式：强制把 --body 当 HTML 正文发")
+    p.add_argument("--html-file", help="send 模式：直接把该 HTML 文件作为邮件正文（渲染版，不挂附件）")
     p.add_argument("--to", help="send 模式：收件人，缺省用 my/smtp_config.json 的默认收件人")
     args = p.parse_args()
     if args.mode == "check":
