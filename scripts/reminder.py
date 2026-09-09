@@ -186,15 +186,30 @@ def cmd_preview(args):
         })
 
     if items:
-        lines = [f"明天（{key}）行程：\n"]
-        for it in items:
-            lines.append(f"- {it['date_label']} {it['weekday']}｜{it['title']}｜{it['role']}")
-            if it["detail"]:
-                lines.append(f"  {it['detail']}")
-        body = "\n".join(lines)
         subject = f"🌙 明日行程预告（{key}）"
+        # HTML 渲染正文（手机端直接看到表格，不挂附件）
+        html_rows = []
+        for it in items:
+            detail_html = (it["detail"] or "").replace("\n", "<br>")
+            html_rows.append(
+                f"<tr>"
+                f"<td bgcolor='#f5f5f5'>{it['date_label']} {it['weekday']}</td>"
+                f"<td>{it['title']}</td>"
+                f"<td>{it['role']}</td>"
+                f"<td>{detail_html}</td>"
+                f"</tr>"
+            )
+        html_body = (
+            f"<h3>明天（{key}）行程</h3>"
+            "<table border='1' cellpadding='6' cellspacing='0' style='border-collapse:collapse'>"
+            "<tr bgcolor='#e0e0e0'>"
+            "<th>日期</th><th>事项</th><th>身份</th><th>详情</th>"
+            "</tr>"
+            + "".join(html_rows) +
+            "</table>"
+        )
         try:
-            send_email(subject, body)
+            send_email(subject, html_body, html=True)
             previewed[key] = today.isoformat()
             save_state(state)
             print(json.dumps({"mode": "preview", "sent": True, "date": key, "items": items}, ensure_ascii=False))
