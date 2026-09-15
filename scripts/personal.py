@@ -212,7 +212,7 @@ def schedule_export(args, conn):
         body.append(f"""      <tr>
         <td style="padding:12px 9px;border:1px solid #d8dced;color:#333333;font-weight:bold;font-size:15px;">{esc(r[0])}</td>
         <td style="padding:12px 9px;border:1px solid #d8dced;color:#333333;">{esc(r[2] or "")}</td>
-        <td style="padding:12px 9px;border:1px solid #d8dced;color:#0f6b7a;font-weight:bold;">{esc(r[3] or "")}</td>
+        <td style="padding:12px 9px;border:1px solid #d8dced;color:{'#c9302c' if '【冲突】' in (r[3] or '') else '#0f6b7a'};font-weight:bold;">{esc(r[3] or "")}</td>
         <td style="padding:12px 9px;border:1px solid #d8dced;color:#77809e;">{esc(r[4] or "")}</td>
         <td style="padding:12px 9px;border:1px solid #d8dced;color:#333333;line-height:1.9;{muted}">{html_lines(r[5])}</td>
         {cd}
