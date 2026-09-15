@@ -215,13 +215,15 @@ def schedule_export(args, conn):
         cd_color = "#c9302c" if red else ("#9aa0b4" if label in ("已完成", "待定") else "#333333")
         cd = f'<td style="padding:12px 9px;border:1px solid #d8dced;color:{cd_color};font-weight:bold;">{esc(label)}</td>'
         muted = ' color:#7d8399;' if r[6] == "已完成" else ''
-        conflict = r[1] in conflict_dates
-        conflict_style = 'background-color:#fff3cd;' if conflict else ''
-        conflict_title = f'【冲突】{esc(r[3] or "")}' if conflict else esc(r[3] or "")
-        body.append(f"""      <tr style="{conflict_style}">
-        <td style="padding:12px 9px;border:1px solid #d8dced;color:#333333;font-weight:bold;font-size:15px;{conflict_style}">{esc(r[0])}</td>
+        is_conflict = r[1] in conflict_dates
+        row_bg = ' bgcolor="#fff3cd"' if is_conflict else ''
+        date_bg = ' bgcolor="#fff3cd"' if is_conflict else ''
+        title_color = '#c9302c' if is_conflict else '#0f6b7a'
+        title_prefix = '【冲突】' if is_conflict else ''
+        body.append(f"""      <tr{row_bg}>
+        <td style="padding:12px 9px;border:1px solid #d8dced;color:#333333;font-weight:bold;font-size:15px;{date_bg}">{esc(r[0])}</td>
         <td style="padding:12px 9px;border:1px solid #d8dced;color:#333333;">{esc(r[2] or "")}</td>
-        <td style="padding:12px 9px;border:1px solid #d8dced;color:#c9302c;font-weight:bold;">{conflict_title}</td>
+        <td style="padding:12px 9px;border:1px solid #d8dced;color:{title_color};font-weight:bold;">{title_prefix}{esc(r[3] or "")}</td>
         <td style="padding:12px 9px;border:1px solid #d8dced;color:#77809e;">{esc(r[4] or "")}</td>
         <td style="padding:12px 9px;border:1px solid #d8dced;color:#333333;line-height:1.9;{muted}">{html_lines(r[5])}</td>
         {cd}
